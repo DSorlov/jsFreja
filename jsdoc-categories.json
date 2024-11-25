@@ -1,0 +1,14 @@
+{
+    "Enums" : {
+        "displayName" : "Enums"
+    },
+    "Responses" : {
+        "displayName" : "Responses"
+    },
+    "Freja" : {
+        "displayName" : "Freja"
+    },
+    "UserInfo" : {
+        "displayName" : "UserInfo"
+    }
+}

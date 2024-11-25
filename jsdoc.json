@@ -1,0 +1,51 @@
+{
+    "recurseDepth": 1,
+    "source": {
+        "include": ["index.js"]
+    },
+    "sourceType": "module",
+    "opts": {
+        "template": "node_modules/docdash-extended",
+        "encoding": "utf8",
+        "destination": "./docs/jsdoc",
+        "recurse": true,
+        "readme": "README.md"        
+    },
+    "plugins": [
+        "plugins/markdown",
+        "node_modules/docdash-extended/categories"
+    ],
+    "tags": {
+        "cleverLinks": true,
+        "allowUnknownTags": true,
+        "dictionaries": ["jsdoc","closure"]
+    },
+    "docdash": {
+        "static": true,
+        "sort": true,
+        "search": true,
+        "collapse": true,
+        "typedefs": true,
+        "removeQuotes": "none",
+        "scripts": [],
+        "ShortenTypes": true,
+        "menu":{
+            "Github repo": {
+                "href":"https://github.com/dsorlov/freja",
+                "target":"_blank",
+                "class":"menu-item",
+                "id":"repository"
+            }
+        },
+        "sectionOrder": [
+            "Classes",
+            "Categories"
+        ]
+    },
+    "templates": {
+        "default": {
+            "useLongnameInNav": true
+        }
+    },
+    "categoriesFile": "./jsdoc-categories.json"
+}

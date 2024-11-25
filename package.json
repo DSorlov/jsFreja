@@ -1,0 +1,28 @@
+{
+  "name": "freja",
+  "version": "1.0.1",
+  "description": "Freja API for node.js",
+  "main": "index.js",
+  "types": "types.d.ts",
+  "scripts": {
+    "build": "jsdoc -c jsdoc.json && jsdoc2md ./index.js > FrejaAPI.md && jsdoc -t node_modules/tsd-jsdoc/dist ./index.js -d ./"
+  },
+  "author": "Daniel Sörlöv <daniel@sorlov.com>",
+  "license": "MIT",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dsorlov/jsfreja.git"
+  },
+  "devDependencies": {
+    "docdash": "^2.0.2",
+    "docdash-extended": "^1.0.2",
+    "jsdoc": "^3.6.11",
+    "jsdoc-to-markdown": "^9.0.5",
+    "tsd-jsdoc": "^2.5.0",
+    "typedoc": "^0.26.11"
+  },
+  "dependencies": {
+    "jsonwebtoken": "^9.0.2"
+  }
+}
