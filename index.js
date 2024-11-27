@@ -5,13 +5,19 @@ import pjson from './package.json' with { type: "json" };
 import jwt from 'jsonwebtoken';
 
 /**
+ * @module freja
+ * @description The Freja module will allow you to interact with the Freja eID API. The module is designed to be used in a Node.js environment and will allow you to create authentication and signing requests, as well as manage user information. 
+ * @version 1.0.2
+ */
+
+/**
  * @readonly
  * @enum {Object}
  * @category Enums
  * @property {string} PRODUCTION "PRODUCTION"
  * @property {string} TEST "TEST"
  */
-export const APIMode = Object.freeze({
+const APIMode = Object.freeze({
     PRODUCTION: 'PRODUCTION',
     TEST: 'TEST'
 });
@@ -23,7 +29,7 @@ export const APIMode = Object.freeze({
  * @property {string} QR_CODE "QR_CODE"
  * @property {string} TEXT "TEXT"
  */
-export const FrejaIdentifierDisplayType = Object.freeze({
+const FrejaIdentifierDisplayType = Object.freeze({
     QR_CODE: 'QR_CODE',
     TEXT: 'TEXT'
 });
@@ -32,13 +38,14 @@ export const FrejaIdentifierDisplayType = Object.freeze({
  * @readonly
  * @enum {Object}
  * @category UserInfo
+ * @name UserInfo
  * @property {string} INFERRED "INFERRED"
  * @property {string} EMAIL "EMAIL"
  * @property {string} PHONE "PHONE"
  * @property {string} SSN "SSN"
  * @property {string} ORGID "ORG_ID"
  */
-export const UserInfoType = Object.freeze({
+const UserInfoType = Object.freeze({
     INFERRED: 'INFERRED',
     EMAIL: 'EMAIL',
     PHONE: 'PHONE',
@@ -56,7 +63,7 @@ export const UserInfoType = Object.freeze({
  * @property {string} ORGID_SIGN "I"
  * @property {string} ORGID_MGMT "M"
  */
-export const RequestType = Object.freeze({
+const RequestType = Object.freeze({
     AUTH: 'A',
     SIGN: 'S',
     ORGID_AUTH: 'O',
@@ -72,7 +79,7 @@ export const RequestType = Object.freeze({
  * @property {string} EXTENDED "EXTENDED"
  * @property {string} XML_MINAMEDDELANDEN "XML_MINAMEDDELANDEN" 
  */
-export const SignatureType = Object.freeze({
+const SignatureType = Object.freeze({
     SIMPLE: 'SIMPLE',
     EXTENDED: 'EXTENDED',
     XML_MINAMEDDELANDEN: 'XML_MINAMEDDELANDEN'
@@ -86,7 +93,7 @@ export const SignatureType = Object.freeze({
  * @property {string} EXTENDED "EXTENDED"
  * @property {string} PLUS "PLUS"
  */
-export const RegistrationLevel = Object.freeze({
+const RegistrationLevel = Object.freeze({
     BASIC: 'BASIC',
     EXTENDED: 'EXTENDED',
     PLUS: 'PLUS'
@@ -99,7 +106,7 @@ export const RegistrationLevel = Object.freeze({
  * @property {string} DEFAULT "DEFAULT"
  * @property {string} DEFAULT_AND_FACE "DEFAULT_AND_FACE"
  */
-export const ConfirmationMethod = Object.freeze({
+const ConfirmationMethod = Object.freeze({
     DEFAULT: 'DEFAULT',
     DEFAULT_AND_FACE: 'DEFAULT_AND_FACE'
 });
@@ -111,7 +118,7 @@ export const ConfirmationMethod = Object.freeze({
  * @property {string} POSTAL "POSTAL"
  * @property {string} RESIDENTIAL "RESIDENTIAL"
  */
-export const FrejaUserAddressType = Object.freeze({
+const FrejaUserAddressType = Object.freeze({
     POSTAL: 'POSTAL',
     RESIDENTIAL: 'RESIDENTIAL'
 });
@@ -122,7 +129,7 @@ export const FrejaUserAddressType = Object.freeze({
  * @category Freja
  * @property {string} GOVERNMENT_REGISTRY "GOVERNMENT_REGISTRY"
  */
-export const FrejaUserAddressSource = Object.freeze({
+const FrejaUserAddressSource = Object.freeze({
     GOVERNMENT_REGISTRY: 'GOVERNMENT_REGISTRY'
 });
 
@@ -144,7 +151,7 @@ export const FrejaUserAddressSource = Object.freeze({
  * @property {string} RELYING_PARTY_USER_ID The relying party user ID
  * @property {string} INTEGRATOR_SPECIFIC_USER_ID The integrator specific user ID
  */
-export const UserAttributes = Object.freeze({
+const UserAttributes = Object.freeze({
     BASIC_USER_INFO: 'BASIC_USER_INFO',
     EMAIL_ADDRESS: 'EMAIL_ADDRESS',
     ALL_EMAIL_ADDRESSES: 'ALL_EMAIL_ADDRESSES',
@@ -170,7 +177,7 @@ export const UserAttributes = Object.freeze({
  * @property {UserAttributes[]} COMMON_AUTH Attributes commonly used for authentication (Requires EXTENDED or PLUS registration level)
  * @property {UserAttributes[]} COMMON_SIGN Attributes commonly used for signing (Requires EXTENDED or PLUS registration level)
  */
-export const UserAttributeCollections = Object.freeze({
+const UserAttributeCollections = Object.freeze({
     ALL_EXTENDED: [
         UserAttributes.BASIC_USER_INFO,
         UserAttributes.EMAIL_ADDRESS,
@@ -218,7 +225,7 @@ export const UserAttributeCollections = Object.freeze({
  * @property {string} RP_REJECTED "RP_REJECTED"
  * @property {string} APPROVED "APPROVED"
  */
-export const RequestStatus = Object.freeze({
+const RequestStatus = Object.freeze({
     STARTED: 'STARTED',
     DELIVERED: 'DELIVERED_TO_MOBILE',
     CANCELLED: 'CANCELED',
@@ -240,7 +247,7 @@ export const RequestStatus = Object.freeze({
  * @property {string} SWEDISH_TAX_ID "TAXID"
  * @property {string} OTHER "OTHER"
  */
-export const FrejaDocumentTypes = Object.freeze({
+const FrejaDocumentTypes = Object.freeze({
     PASSPORT: 'PASS',
     DRIVER_LICENSE: 'DRILIC',
     NATIONAL_ID: 'NATID',
@@ -363,7 +370,7 @@ export const FrejaDocumentTypes = Object.freeze({
  * @extends IRequestStatusMessage
  * @property {boolean} isOk Must be true
  * @property {RequestStatus} status The transaction status
- * @property {IFrejaUser} data The results of the request
+ * @property {IFrejaResponse} data The results of the request
  * @property {boolean} isFinal Always true
  */
 
@@ -500,23 +507,20 @@ export const FrejaDocumentTypes = Object.freeze({
 
 /**
  * The main Freja API class.
- * @public
- * @class
- * @property {RegistrationLevel} RegistrationLevel The minimum requested level.
- * @property {ConfirmationMethod} ConfirmationMethod The confirmation method.
- * @property {UserAttributes[]} UserAttributes The user attributes to return.
- * @property {string} RelyingPartyId The relying party ID (used by integrators only).
- * @example
- * const freja = new FrejaAPI(APIMode.TEST, 'path/to/pfx', 'password', 'path/to/cacert');
- * var result = await freja.initAuthRequest('SE199912121212');
- * if (result.isOk) {
- *  console.log(result.token);
- *  console.log(result.qrCodeUrl());
- * } else {
- *  console.error(result.message);
- * }
+ * @class module:freja.FrejaAPI
+ * @alias FrejaAPI
+ * @param {APIMode} mode The API mode.
+ * @param {string} authPfx The path to the PFX file.
+ * @param {string} authPwd The password for the PFX file.
+ * @param {Object} [jwtToken=undefined] The JWT token files ({'x5t': 'file'}).
+ * @param {undefined|string|string[]} [caCert=undefined] The path to the CA certificate file(s).
+ * @throws {Error} If the mode is invalid or if the password is missing.
+ * @throws {Error} If the PFX or CA certificate file does not exist. * @example
  */
-export class FrejaAPI {
+/**
+ * @ignore
+ */
+class FrejaAPI {
 
     //Private properties
     /** @type undefined|string */
@@ -530,36 +534,44 @@ export class FrejaAPI {
     #caCert = [];
 
     //Public properties
-    /** @type RegistrationLevel */
+    /**
+     * @property {RegistrationLevel} RegistrationLevel The minimum requested level.
+     * @memberof module:freja.FrejaAPI
+     * @type RegistrationLevel
+     */
     #registrationLevel = RegistrationLevel.BASIC;
     get RegistrationLevel() { return this.#registrationLevel; }
     set RegistrationLevel(value) { this.#registrationLevel = value; }
 
-    /** @type ConfirmationMethod */
+    /**
+     * @property {ConfirmationMethod} ConfirmationMethod
+     * @memberof module:freja.FrejaAPI
+     * @type ConfirmationMethod
+     */
     #confirmationMethod = ConfirmationMethod.DEFAULT;
     get ConfirmationMethod() { return this.#confirmationMethod; }
     set ConfirmationMethod(value) { this.#confirmationMethod = value; }
 
-    /** @type Array<UserAttributes> */
+    /**
+     * @property {UserAttributes[]} UserAttributes The user attributes to return.
+     * @memberof module:freja.FrejaAPI
+     * @type Array<UserAttributes>
+     */
     #userAttributes = [];
     get UserAttributes() { return this.#userAttributes; }
     set UserAttributes(value) { this.#userAttributes = value; }
 
-    /** @type undefined|string */
+    /**
+     * @property {string} RelyingPartyId The relying party ID (used by integrators only).
+     * @memberof module:freja.FrejaAPI
+     * @type undefined|string
+     */
     #relyingPartyId = undefined;
     get RelyingPartyId() { return this.#relyingPartyId; }
     set RelyingPartyId(value) { this.#relyingPartyId = value; }    
 
     /**
-     * Create a new Freja API instance.
-     * @public
-     * @param {APIMode} mode The API mode.
-     * @param {string} authPfx The path to the PFX file.
-     * @param {string} authPwd The password for the PFX file.
-     * @param {Object} [jwtToken=undefined] The JWT token files ({'x5t': 'file'}).
-     * @param {undefined|string|string[]} [caCert=undefined] The path to the CA certificate file(s).
-     * @throws {Error} If the mode is invalid or if the password is missing.
-     * @throws {Error} If the PFX or CA certificate file does not exist.
+     * @constructs
      */
     constructor(mode, authPfx, authPwd, jwtToken=undefined, caCert=undefined) {
         if (!mode || (mode !== APIMode.PRODUCTION && mode !== APIMode.TEST)) {
@@ -595,6 +607,7 @@ export class FrejaAPI {
 
         if (caCert) {
             if (Array.isArray(caCert)) {
+                //@ts-ignore We are actually checking already if we are an array so just visual studio validation error
                 for (const cert of caCert) {
                     if (!existsSync(cert)) {
                         throw new Error("You must provide a valid CA certificate for authentication.");
@@ -607,8 +620,10 @@ export class FrejaAPI {
 
         if (!caCert)
             if (mode === APIMode.PRODUCTION)
+                //@ts-ignore we are asigning it an array so never mind (it is an empty array in initialization)
                 caCert = [`certs/prod_root.pem`];
             else
+                //@ts-ignore we are asigning it an array so never mind (it is an empty array in initialization)
                 caCert = [`certs/test_root.pem`];
 
         this.#apiBase = mode === APIMode.PRODUCTION ? "prod.frejaeid.com" : "test.frejaeid.com";
@@ -629,9 +644,10 @@ export class FrejaAPI {
 
     /**
      * Create a user info object.
+     * @method module:freja.FrejaAPI#UserInfoFactory
      * @public
-     * @param {any} userData The user data to create the object from (email, phone, ssn, orgid etc.)
-     * @returns {IUserInfo} The user info object.
+     * @param {Object|String} userData The user data to create the object from (email, phone, ssn, orgid etc.)
+     * @return {IUserInfo} The user info object.
      * @throws {Error} If the data is invalid or missing.
      */
     UserInfoFactory(userData) {
@@ -696,11 +712,12 @@ export class FrejaAPI {
 
     /**
      * Initialize an authentication request (shorthand method).
+     * @method module:freja.FrejaAPI#AuthRequest
      * @public
      * @async
      * @param {undefined | string | object | IUserInfo} [userInfo=undefined] The user to create the authentication request for.
      * @param {boolean} [orgId=false] If the request is for an organisation id
-     * @returns {Promise<IFailureResult | IInitializationSuccess>}
+     * @return {Promise<IFailureResult | IInitializationSuccess>}
      */
     async AuthRequest(userInfo,orgId=false) {
         return this.InitRequest(orgId?RequestType.ORGID_AUTH:RequestType.AUTH, this.UserInfoFactory(userInfo));
@@ -708,17 +725,18 @@ export class FrejaAPI {
 
     /**
      * Initialize an signing request (shorthand method).
+     * @method module:freja.FrejaAPI#SignRequest
      * @public
      * @async
      * @param {string | object | IUserInfo} userInfo The user to create the signing request for.
      * @param {string} title The title of the request (used for notification).
      * @param {string} text The text to sign.
      * @param {boolean} [orgId=false] If the request is for an organisation id
-     * @returns {Promise<IFailureResult | IInitializationSuccess>}
+     * @return {Promise<IFailureResult | IInitializationSuccess>}
      */
     async SignRequest(userInfo, title, text, orgId=false) {
         if (!userInfo || !text) {
-            return this.#createErrorObject(9012);
+            return this._createErrorObject(9012);
         }
         var notification = {
             title,
@@ -733,6 +751,7 @@ export class FrejaAPI {
 
     /**
      * Initialize an signing request (shorthand method).
+     * @method module:freja.FrejaAPI#SignBufferRequest
      * @public
      * @async
      * @param {string | object | IUserInfo} userInfo The user to create the signing request for.
@@ -744,7 +763,7 @@ export class FrejaAPI {
      */
     async SignBufferRequest(userInfo, title, text, data, orgId=false) {
         if (!userInfo || !text) {
-            return this.#createErrorObject(9012);
+            return this._createErrorObject(9012);
         }
         var notification = {
             title,
@@ -760,6 +779,7 @@ export class FrejaAPI {
     
     /**
      * Initialize an organisation id request (shorthand method).
+     * @method module:freja.FrejaAPI#AddOrgIdRequest
      * @public
      * @async
      * @param {string | object | IUserInfo} userInfo The user to create the organisation id for
@@ -771,7 +791,7 @@ export class FrejaAPI {
     async AddOrgIdRequest(userInfo, title, identifier, value, displayTypes=[FrejaIdentifierDisplayType.QR_CODE, FrejaIdentifierDisplayType.TEXT]) {
 
         if (!userInfo || !title || !identifier || !value || !displayTypes)
-            return this.#createErrorObject(9012);
+            return this._createErrorObject(9012);
 
         return this.InitRequest(RequestType.ORGID_ADD, this.UserInfoFactory(userInfo), { orgId: {
             title,
@@ -783,6 +803,7 @@ export class FrejaAPI {
 
     /**
      * Initialize an authentication or signature request.
+     * @method module:freja.FrejaAPI#InitRequest
      * @public
      * @async
      * @param {RequestType} requestType The type of request.
@@ -793,14 +814,14 @@ export class FrejaAPI {
     async InitRequest(requestType, userInfo, ...additionalParams) {
 
         if (!userInfo && !userInfo.userInfoType && !userInfo.userInfo)
-            return this.#createErrorObject(9022);
+            return this._createErrorObject(9022);
 
         const requestData = {
             ...userInfo,
         };
 
         if (this.#userAttributes.length > 0)
-            requestData.attributesToReturn = this.#convertToAttributeBag(this.#userAttributes)
+            requestData.attributesToReturn = this._convertToAttributeBag(this.#userAttributes)
 
         if (this.#confirmationMethod !== ConfirmationMethod.DEFAULT)
             requestData.userConfirmationMethod = this.#confirmationMethod
@@ -818,7 +839,7 @@ export class FrejaAPI {
             if (requestType === RequestType.ORGID_AUTH) {
                 requestUri = '/organisation/authentication/1.0/init';
     
-                const orgIdIssuer = this.#findParam(additionalParams, 'issuer');
+                const orgIdIssuer = this._findParam(additionalParams, 'issuer');
                 if (orgIdIssuer)
                     requestData.organisationId = orgIdIssuer;
             } else {
@@ -830,22 +851,22 @@ export class FrejaAPI {
             requestUri = '/sign/1.0/initSignature';
             requestName = 'initSignRequest';
 
-            var expiry = this.#findParam(additionalParams, 'waitDays');
+            var expiry = this._findParam(additionalParams, 'waitDays');
             if (expiry)
-                requestData.expiry = this.#calculateMilisecondsSinceEpoch(this.#findParam(additionalParams, 'waitDays'));
+                requestData.expiry = this._calculateMilisecondsSinceEpoch(this._findParam(additionalParams, 'waitDays'));
 
-            const signText = this.#findParam(additionalParams, 'text');
+            const signText = this._findParam(additionalParams, 'text');
             if (!signText)
-                return this.#createErrorObject(9001);
+                return this._createErrorObject(9001);
 
-            const signatureType = this.#findParam(additionalParams, 'signatureType');
+            const signatureType = this._findParam(additionalParams, 'signatureType');
             if (!signatureType)
-                return this.#createErrorObject(9002);
+                return this._createErrorObject(9002);
 
             // Check for binary/Singing bits
-            const binaryData = this.#findParam(additionalParams, 'binaryData');
+            const binaryData = this._findParam(additionalParams, 'binaryData');
             if (signatureType === SignatureType.SIMPLE && binaryData)
-                return this.#createErrorObject(9003);
+                return this._createErrorObject(9003);
 
             requestData.signatureType = signatureType;
             requestData.dataToSignType = binaryData ? 'EXTENDED_UTF8_TEXT' : 'SIMPLE_UTF8_TEXT';
@@ -853,14 +874,14 @@ export class FrejaAPI {
             if (binaryData) requestData.dataToSign.binaryData = Buffer.from(binaryData).toString('base64')
 
             //Should we produce a signature
-            const notification = this.#findParam(additionalParams, 'notification');
+            const notification = this._findParam(additionalParams, 'notification');
             if (notification) {
                 if (typeof notification !== 'object')
-                    return this.#createErrorObject(9004);
+                    return this._createErrorObject(9004);
                 if (!notification.title)
-                    return this.#createErrorObject(9005);
+                    return this._createErrorObject(9005);
                 if (!notification.message)
-                    return this.#createErrorObject(9006);
+                    return this._createErrorObject(9006);
                 requestData.pushNotification = {
                     title: notification.title,
                     text: notification.message
@@ -870,21 +891,21 @@ export class FrejaAPI {
             requestUri = '/organisation/management/orgId/1.0/initAdd';
             requestName = 'initAddOrganisationIdRequest';
 
-            var expiry = this.#findParam(additionalParams, 'waitDays');
+            var expiry = this._findParam(additionalParams, 'waitDays');
             if (expiry)
-                requestData.expiry = this.#calculateMilisecondsSinceEpoch(this.#findParam(additionalParams, 'waitDays'));
+                requestData.expiry = this._calculateMilisecondsSinceEpoch(this._findParam(additionalParams, 'waitDays'));
     
             /**
              * @private 
              * @type { undefined|IFrejaUserAddOrganisation }
              */
-            var orgIdObject = this.#findParam(additionalParams, 'orgId');
-            if (!orgIdObject) return this.#createErrorObject(9013);
-            if (!orgIdObject.title) return this.#createErrorObject(9014);
-            if (!orgIdObject.identifierName) return this.#createErrorObject(9015);
-            if (!orgIdObject.identifier) return this.#createErrorObject(9016);
-            if (!orgIdObject.identifierDisplayTypes) return this.#createErrorObject(9017);
-            if (orgIdObject.attributes && !Array.isArray(orgIdObject.attributes)) return this.#createErrorObject(9018);
+            var orgIdObject = this._findParam(additionalParams, 'orgId');
+            if (!orgIdObject) return this._createErrorObject(9013);
+            if (!orgIdObject.title) return this._createErrorObject(9014);
+            if (!orgIdObject.identifierName) return this._createErrorObject(9015);
+            if (!orgIdObject.identifier) return this._createErrorObject(9016);
+            if (!orgIdObject.identifierDisplayTypes) return this._createErrorObject(9017);
+            if (orgIdObject.attributes && !Array.isArray(orgIdObject.attributes)) return this._createErrorObject(9018);
 
             requestData.organisationId = {
                 title: orgIdObject.title,
@@ -895,15 +916,15 @@ export class FrejaAPI {
             }
         } else {
 
-            return this.#createErrorObject(9009);
+            return this._createErrorObject(9009);
 
         }
 
-        const result = await this.#apiRequest(requestUri, requestName, requestData);
+        const result = await this._apiRequest(requestUri, requestName, requestData);
         if (!result.code) {
             const token = `${requestType}${result.json.authRef || result.json.signRef || result.json.orgIdRef}`;
             const responseUrl = `frejaeid://bindUserToTransaction?transactionReference=${token.slice(1)}`;
-            return this.#createSuccessObject({
+            return this._createSuccessObject({
                 token,
                 qrCodeUrl: (originAppScheme = undefined) => {
                     const qrUrl = originAppScheme ? `${responseUrl}&originAppScheme=${originAppScheme}` : responseUrl;
@@ -915,14 +936,15 @@ export class FrejaAPI {
             });
         } else {
             if (result.code === 9000)
-                return this.#createErrorObject(result.code, result.message);
+                return this._createErrorObject(result.code, result.message);
             else
-                return this.#createErrorObject(result.code);
+                return this._createErrorObject(result.code);
         }
     }
 
     /**
      * Retrieve the status of a request.
+     * @method module:freja.FrejaAPI#CancelRequest
      * @public
      * @async
      * @param {string} token The token of the request.
@@ -957,17 +979,18 @@ export class FrejaAPI {
             requestData = { orgIdRef: requestId };    
         }
         
-        const result = await this.#apiRequest(requestUri, requestName, requestData)
+        const result = await this._apiRequest(requestUri, requestName, requestData)
         
         if (result.code) {
-            return this.#createErrorObject(result.code, result.message);
+            return this._createErrorObject(result.code, result.message);
         } else {
-            return this.#createSuccessObject({isFinal: true});
+            return this._createSuccessObject({isFinal: true});
         }
     }
 
     /**
      * Retrieve the status of a request.
+     * @method module:freja.FrejaAPI#CheckCustodianship
      * @public
      * @async
      * @param {string} swedishSSN The social security number to check
@@ -977,24 +1000,25 @@ export class FrejaAPI {
         const ssnRegexp = /^SE(19|20)\d{2}([0][1-9]|[1][012])([0|1][1-9]|[3][012])[-]?\d{4}$/;
 
         if (!ssnRegexp.test(swedishSSN)) {
-            return this.#createErrorObject(9012);
+            return this._createErrorObject(9012);
         }
 
         var requestUri = '/custodianship/user/1.0/getCustodianshipStatus';
         var requestName = 'getCustodianshipStatusRequest';
         var requestData = { userCountryIdAndCrn: swedishSSN };
 
-        const result = await this.#apiRequest(requestUri, requestName, requestData)
+        const result = await this._apiRequest(requestUri, requestName, requestData)
         
         if (result.code) {
-            return this.#createErrorObject(result.code, result.message);
+            return this._createErrorObject(result.code, result.message);
         } else {
-            return this.#createSuccessObject({data: result.json.custodianshipStatus, isFinal: true});
+            return this._createSuccessObject({data: result.json.custodianshipStatus, isFinal: true});
         }
     }
 
     /**
      * Retrieve the status of a request.
+     * @method module:freja.FrejaAPI#NewCustomIdentifier
      * @public
      * @async
      * @param {string} customIdentifier The custom identifier to append
@@ -1004,28 +1028,29 @@ export class FrejaAPI {
     async NewCustomIdentifier(customIdentifier,userInfo) {
 
         if (!userInfo)
-            return this.#createErrorObject(9022);
+            return this._createErrorObject(9022);
 
         userInfo = this.UserInfoFactory(userInfo);
 
         if (!customIdentifier && typeof customIdentifier !== 'string')
-            return this.#createErrorObject(9021);
+            return this._createErrorObject(9021);
 
         var requestUri = '/user/manage/1.0/setCustomIdentifier';
         var requestName = 'setCustomIdentifierRequest';
         var requestData = { customIdentifier: customIdentifier };
 
-        const result = await this.#apiRequest(requestUri, requestName, requestData)
+        const result = await this._apiRequest(requestUri, requestName, requestData)
         
         if (result.code) {
-            return this.#createErrorObject(result.code, result.message);
+            return this._createErrorObject(result.code, result.message);
         } else {
-            return this.#createSuccessObject({ isFinal: false});
+            return this._createSuccessObject({ isFinal: false});
         }
     }    
 
     /**
      * Retrieve the status of a request.
+     * @method module:freja.FrejaAPI#DeleteCustomIdentifier
      * @public
      * @async
      * @param {string} customIdentifier The custom identifier to append
@@ -1034,23 +1059,24 @@ export class FrejaAPI {
     async DeleteCustomIdentifier(customIdentifier) {
 
         if (!customIdentifier && typeof customIdentifier !== 'string')
-            return this.#createErrorObject(9021);
+            return this._createErrorObject(9021);
 
         var requestUri = '/user/manage/1.0/deleteCustomIdentifier';
         var requestName = 'deleteCustomIdentifierRequest';
         var requestData = { customIdentifier: customIdentifier };
 
-        const result = await this.#apiRequest(requestUri, requestName, requestData)
+        const result = await this._apiRequest(requestUri, requestName, requestData)
         
         if (result.code) {
-            return this.#createErrorObject(result.code, result.message);
+            return this._createErrorObject(result.code, result.message);
         } else {
-            return this.#createSuccessObject({ isFinal: false});
+            return this._createSuccessObject({ isFinal: false});
         }
     }     
 
     /**
      * Retrieve the status of a request.
+     * @method module:freja.FrejaAPI#InquireRequest
      * @public
      * @async
      * @param {string} token The token of the request.
@@ -1086,38 +1112,45 @@ export class FrejaAPI {
         }
 
         if (requestUri === '')
-            return this.#createErrorObject(9009);
+            return this._createErrorObject(9009);
 
-        const result = await this.#apiRequest(requestUri, requestName, requestData)
+        const result = await this._apiRequest(requestUri, requestName, requestData)
         
         if (result.code) {
-            return this.#createErrorObject(result.code, result.message);
+            return this._createErrorObject(result.code, result.message);
         } else {
 
             switch (result.json.status) {
                 case RequestStatus.STARTED:
                 case RequestStatus.DELIVERED:
-                    return this.#createSuccessObject({ status: result.json.status, isFinal: false});
+                    return this._createSuccessObject({ status: result.json.status, isFinal: false});
                 case RequestStatus.REJECTED:
                 case RequestStatus.EXPIRED:
                 case RequestStatus.RP_CANCELLED:
                 case RequestStatus.RP_REJECTED:
                 case RequestStatus.CANCELLED:
-                        return this.#createSuccessObject({ status: result.json.status, isFinal: true});
+                        return this._createSuccessObject({ status: result.json.status, isFinal: true});
                 case RequestStatus.APPROVED:
-                    var convertedResult = this.#processSuccessResponse(result.json);
+                    var convertedResult = this._processSuccessResponse(result.json);
                     if (convertedResult)
-                        return this.#createSuccessObject({ status: result.json.status, data: convertedResult, isFinal: true });
+                        return this._createSuccessObject({ status: result.json.status, data: convertedResult, isFinal: true });
                     else
-                        return this.#createErrorObject(9011);
+                        return this._createErrorObject(9011);
                 default:
-                    return this.#createErrorObject(9010);
+                    return this._createErrorObject(9010);
             }
         }
 
     }    
 
-    #convertToAttributeBag(/** @type {Array<UserAttributes>} */attributeList) {
+    /**
+     * Convert an array of UserAttributes to an array of AttributeBag for use with API
+     * @method module:freja.FrejaAPI#_convertToAttributeBag
+     * @private
+     * @param {Array<UserAttributes>} attributeList The list of attributes to convert
+     * @returns {Array<Object>} The converted list
+     */
+    _convertToAttributeBag(attributeList) {
         var attributeBag = [];
         for (const attribute of attributeList) {
             attributeBag.push({ attribute: attribute });
@@ -1125,7 +1158,14 @@ export class FrejaAPI {
         return attributeBag;
     }    
 
-    #calculateMilisecondsSinceEpoch(daysFromNow=7) {
+    /**
+     * How many milliseconds is there from 1970 1st of January to a given date from today
+     * @method module:freja.FrejaAPI#_calculateMilisecondsSinceEpoch
+     * @private
+     * @param {number} daysFromNow 
+     * @returns {number}
+     */
+    _calculateMilisecondsSinceEpoch(daysFromNow=7) {
         var result = new Date();
         result.setDate(result.getDate() + daysFromNow)
         return result.valueOf();
@@ -1133,10 +1173,12 @@ export class FrejaAPI {
 
     /**
      * Converts an incommin API response to a IFrejaUser object
+     * @method module:freja.FrejaAPI#_processSuccessResponse
+     * @private
      * @param {Object} apiResponse A JSON-formatted response from Freja API 
      * @returns {IFrejaResponse|undefined} The converted object or undefined on error
      */
-    #processSuccessResponse(apiResponse) {
+    _processSuccessResponse(apiResponse) {
         try {
             const jwtInfo = jwt.decode(apiResponse.details, { complete: true });
             if (!jwtInfo || !jwtInfo.header || !jwtInfo.header.x5t || !this.#jwtToken[jwtInfo.header.x5t])
@@ -1281,10 +1323,12 @@ export class FrejaAPI {
 
     /**
      * Create an success object.
+     * @method module:freja.FrejaAPI#_createSuccessObject
+     * @private
      * @param {any} data The data to return.
      * @returns {ISuccessResultMessage | IInitializationSuccess | IRequestStatusMessage | ICompletedRequestMessage} The success object
      */
-    #createSuccessObject(data) {
+    _createSuccessObject(data) {
         return {
             isOk: true,
             ...data
@@ -1293,16 +1337,18 @@ export class FrejaAPI {
 
     /**
      * Create an error object.
+     * @method module:freja.FrejaAPI#_createErrorObject
+     * @private
      * @param {number} code The error code
      * @param {string} [extendedMessage=undefined] Sub-error code
      * @param {string} [trace=undefined] Extended troubleshooting information
      * @returns {IFailureResult} The error object
      */
-    #createErrorObject(code, extendedMessage=undefined, trace=undefined) {
+    _createErrorObject(code, extendedMessage=undefined, trace=undefined) {
         const errorObject = {
             isOk: false,
             code: code,
-            message: FrejaAPIErrors[code],
+            message: FrejaAPI.GetErrorText(code),
         };
 
         if (extendedMessage) 
@@ -1316,11 +1362,13 @@ export class FrejaAPI {
 
     /**
      * Look for a parameter in an array.
+     * @method module:freja.FrejaAPI#_findParam
+     * @private
      * @param {any[]} params The array to search.
      * @param {any} paramName The parameter to find.
      * @returns {any | undefined} The parameter if found, otherwise undefined.
      */
-    #findParam(params, paramName) {
+    _findParam(params, paramName) {
         if(!Array.isArray(params)) params = [params];
 
         for (const param of params) {
@@ -1334,6 +1382,8 @@ export class FrejaAPI {
 
     /**
      * Fetch data from the API.
+     * @method module:freja.FrejaAPI#_apiRequest
+     * @private
      * @async
      * @param {string} url The URL to fetch.
      * @param {string} apiMethod The method of the api to call
@@ -1341,7 +1391,7 @@ export class FrejaAPI {
      * @param {any} [headers] The headers to send.
      * @returns {Promise<IHttpResponse>} The response from the API.
      */
-    async #apiRequest(url, apiMethod, data = undefined, headers = undefined) {
+    async _apiRequest(url, apiMethod, data = undefined, headers = undefined) {
         return new Promise((resolve) => {
 
             const requestOptions = {
@@ -1414,132 +1464,80 @@ export class FrejaAPI {
             req.end();         
         });
     }
-}
 
-/**
- * @readonly
- * @enum {Object}
- * @category Enums
- * @property {string} 1001 - Invalid or missing userInfoType.
- * @property {string} 1002 - Invalid or missing userInfo.
- * @property {string} 1003 - Invalid restrict.
- * @property {string} 1004 - You are not allowed to call this method.
- * @property {string} 1005 - User has disabled your service.
- * @property {string} 1007 - Invalid min registration level.
- * @property {string} 1008 - Unknown Relying Party.
- * @property {string} 1009 - You are not allowed to request integratorSpecificUserId parameter.
- * @property {string} 1010 - JSON request cannot be parsed.
- * @property {string} 1012 - User with the specified userInfo does not exist in Freja eID database.
- * @property {string} 1013 - You are not allowed to request user custodianship information.
- * @property {string} 1014 - Invalid user CRN, CRN missing or user country code is not SE. (The CRN is the equivalent of an SSN)
- * @property {string} 1100 - Invalid reference (for example, nonexistent or expired).
- * @property {string} 1200 - Invalid or missing includePrevious parameter.
- * @property {string} 2000 - Authentication request failed. Previous authentication request was rejected due to security reasons.
- * @property {string} 2002 - Invalid attributesToReturn parameter.
- * @property {string} 2003 - Custom identifier has to exist when it is requested.
- * @property {string} 3000 - Invalid or missing dataToSignType.
- * @property {string} 3001 - Invalid or missing dataToSign.
- * @property {string} 3002 - Invalid or missing signatureType.
- * @property {string} 3003 - Invalid expiry time.
- * @property {string} 3004 - Invalid push notification.
- * @property {string} 3005 - Invalid attributesToReturn parameter.
- * @property {string} 3006 - Custom identifier has to exist when it is requested.
- * @property {string} 3007 - Invalid title.
- * @property {string} 3008 - Invalid SSN for advanced signing. Advanced signing cannot be performed by users from your country.
- * @property {string} 3009 - Invalid advanced signing request. Missing SSN and basicUserInfo in its attributesToReturn parameter.
- * @property {string} 4000 - Invalid or missing Organisation ID identifier.
- * @property {string} 4002 - This Organisation ID identifier is already used.
- * @property {string} 4003 - Invalid expiry.
- * @property {string} 4004 - Invalid or missing Organisation ID title.
- * @property {string} 4005 - Invalid or missing Organisation ID identifier name.
- * @property {string} 4006 - Invalid or missing Organisation ID.
- * @property {string} 4008 - Invalid display type.
- * @property {string} 4007 - Invalid organisation id issuer.
- * @property {string} 4009 - Invalid additional attributes.
- * @property {string} 5000 - Invalid or missing customIdentifier.
- * @property {string} 5001 - There is no user for given custom identifier.
- * @property {string} 5002 - You have already used this customIdentifier
- * @property {string} 9000 - communication error.
- * @property {string} 9001 - text is needed for signature requests.
- * @property {string} 9002 - signatureType is needed for signature requests.
- * @property {string} 9003 - binaryData may not be present on SignatureType.SIMPLE requests.
- * @property {string} 9004 - notification must be of type object.
- * @property {string} 9005 - title is needed for notification object.
- * @property {string} 9006 - message is needed for notification object.
- * @property {string} 9009 - requestType is not valid.
- * @property {string} 9010 - Unkown status code.
- * @property {string} 9011 - Unable to parse response. 
- * @property {string} 9012 - Missing arguments.
- * @property {string} 9013 - Missing or invalid orgId object
- * @property {string} 9014 - Missing or invalid title
- * @property {string} 9015 - Missing or invalid identifierName
- * @property {string} 9016 - Missing or invalid identifier
- * @property {string} 9017 - Missing or invalid identifierDisplayTypes
- * @property {string} 9018 - Missing or invalid attributes    
- * @property {string} 9019 - Invalid or missing token
- * @property {string} 9020 - Invalid or missing swedish SSN
- * @property {string} 9021 - Invalid or missing custom identifier
- * @property {string} 9022 - Invalid or missing userInfo
- */
-export const FrejaAPIErrors = Object.freeze({
-    1001: 'Invalid or missing userInfoType.',
-    1002: 'Invalid or missing userInfo.',
-    1003: 'Invalid restrict.',
-    1004: 'You are not allowed to call this method.',
-    1005: 'User has disabled your service.',
-    1007: 'Invalid min registration level.',
-    1008: 'Unknown Relying Party.',
-    1009: 'You are not allowed to request integratorSpecificUserId parameter.',
-    1010: 'JSON request cannot be parsed.',
-    1012: 'User with the specified userInfo does not exist in Freja eID database.',
-    1013: 'You are not allowed to request user custodianship information.',
-    1014: 'Invalid user CRN, CRN missing or user country code is not SE.',
-    1100: 'Invalid reference (for example, nonexistent or expired).',
-    1200: 'Invalid or missing includePrevious parameter.',
-    2000: 'Authentication request failed. Previous authentication request was rejected due to security reasons.',
-    2002: 'Invalid attributesToReturn parameter.',
-    2003: 'Custom identifier has to exist when it is requested.',
-    3000: 'Invalid or missing dataToSignType.',
-    3001: 'Invalid or missing dataToSign.',
-    3002: 'Invalid or missing signatureType.',
-    3003: 'Invalid expiry time.',
-    3004: 'Invalid push notification.',
-    3005: 'Invalid attributesToReturn parameter.',
-    3006: 'Custom identifier has to exist when it is requested.',
-    3007: 'Invalid title.',
-    3008: 'Invalid SSN for advanced signing. Advanced signing cannot be performed by users from your country.',
-    3009: 'Invalid advanced signing request. Missing SSN and basicUserInfo in its attributesToReturn parameter.',
-    4000: 'Invalid or missing Organisation ID identifier.',
-    4002: 'This Organisation ID identifier is already used.',
-    4003: 'Invalid expiry.',
-    4004: 'Invalid or missing Organisation ID title.',
-    4005: 'Invalid or missing Organisation ID identifier name.',
-    4006: 'Invalid or missing Organisation ID.',
-    4008: 'Invalid display type.',
-    4007: 'Invalid organisation id issuer.',
-    4009: 'Invalid additional attributes.',
-    5000: 'Invalid or missing custom identifier.',
-    5001: 'There is no user for given custom identifier.',
-    5002: 'You have already used this custom identifier.',
-    9000: 'Local error: communication error.',
-    9001: 'Local error: text is needed for signature requests.',
-    9002: 'Local error: signatureType is needed for signature requests.',
-    9003: 'Local error: binaryData is needed for extended signatures.',
-    9004: 'Local error: notification must be of type object.',
-    9005: 'Local error: title is needed for notification object.',
-    9006: 'Local error: message is needed for notification object.',
-    9009: 'Local error: requestType is not valid.',
-    9010: 'Unkown status code.',
-    9011: 'Unable to parse response.',
-    9012: 'Missing arguments.',
-    9013: 'Missing or invalid orgId object',
-    9014: 'Missing or invalid title',
-    9015: 'Missing or invalid identifierName',
-    9016: 'Missing or invalid identifier',
-    9017: 'Missing or invalid identifierDisplayTypes',
-    9018: 'Missing or invalid attributes',
-    9019: 'Invalid or missing token',
-    9020: 'Invalid or missing swedish SSN',
-});
+    /**
+     * Translate a code into a message
+     * @method module:freja.FrejaAPI.GetError
+     * @static
+     * @public
+     * @param {number} errorCode The error code
+     * @returns {string} The error message
+     */
+    static GetErrorText(errorCode) {
+        var errorTable = {
+        1001: 'Invalid or missing userInfoType.',
+        1002: 'Invalid or missing userInfo.',
+        1003: 'Invalid restrict.',
+        1004: 'You are not allowed to call this method.',
+        1005: 'User has disabled your service.',
+        1007: 'Invalid min registration level.',
+        1008: 'Unknown Relying Party.',
+        1009: 'You are not allowed to request integratorSpecificUserId parameter.',
+        1010: 'JSON request cannot be parsed.',
+        1012: 'User with the specified userInfo does not exist in Freja eID database.',
+        1013: 'You are not allowed to request user custodianship information.',
+        1014: 'Invalid user CRN, CRN missing or user country code is not SE.',
+        1100: 'Invalid reference (for example, nonexistent or expired).',
+        1200: 'Invalid or missing includePrevious parameter.',
+        2000: 'Authentication request failed. Previous authentication request was rejected due to security reasons.',
+        2002: 'Invalid attributesToReturn parameter.',
+        2003: 'Custom identifier has to exist when it is requested.',
+        3000: 'Invalid or missing dataToSignType.',
+        3001: 'Invalid or missing dataToSign.',
+        3002: 'Invalid or missing signatureType.',
+        3003: 'Invalid expiry time.',
+        3004: 'Invalid push notification.',
+        3005: 'Invalid attributesToReturn parameter.',
+        3006: 'Custom identifier has to exist when it is requested.',
+        3007: 'Invalid title.',
+        3008: 'Invalid SSN for advanced signing. Advanced signing cannot be performed by users from your country.',
+        3009: 'Invalid advanced signing request. Missing SSN and basicUserInfo in its attributesToReturn parameter.',
+        4000: 'Invalid or missing Organisation ID identifier.',
+        4002: 'This Organisation ID identifier is already used.',
+        4003: 'Invalid expiry.',
+        4004: 'Invalid or missing Organisation ID title.',
+        4005: 'Invalid or missing Organisation ID identifier name.',
+        4006: 'Invalid or missing Organisation ID.',
+        4008: 'Invalid display type.',
+        4007: 'Invalid organisation id issuer.',
+        4009: 'Invalid additional attributes.',
+        5000: 'Invalid or missing custom identifier.',
+        5001: 'There is no user for given custom identifier.',
+        5002: 'You have already used this custom identifier.',
+        9000: 'Local error: communication error.',
+        9001: 'Local error: text is needed for signature requests.',
+        9002: 'Local error: signatureType is needed for signature requests.',
+        9003: 'Local error: binaryData is needed for extended signatures.',
+        9004: 'Local error: notification must be of type object.',
+        9005: 'Local error: title is needed for notification object.',
+        9006: 'Local error: message is needed for notification object.',
+        9009: 'Local error: requestType is not valid.',
+        9010: 'Unkown status code.',
+        9011: 'Unable to parse response.',
+        9012: 'Missing arguments.',
+        9013: 'Missing or invalid orgId object',
+        9014: 'Missing or invalid title',
+        9015: 'Missing or invalid identifierName',
+        9016: 'Missing or invalid identifier',
+        9017: 'Missing or invalid identifierDisplayTypes',
+        9018: 'Missing or invalid attributes',
+        9019: 'Invalid or missing token',
+        9020: 'Invalid or missing swedish SSN',
+        }   
+    
+        return errorTable[errorCode] ? errorTable[errorCode] : 'Unknown error code';
+    };
+};
 
 export default FrejaAPI;
+export { FrejaAPI, RequestType, UserInfoType, SignatureType, FrejaIdentifierDisplayType, ConfirmationMethod, RegistrationLevel, UserAttributes };
