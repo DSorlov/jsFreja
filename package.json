@@ -2,10 +2,13 @@
   "name": "freja",
   "version": "1.0.1",
   "description": "Freja API for node.js",
-  "main": "index.js",
-  "types": "types.d.ts",
+  "main": "./index.js",
+  "types": "./types.d.ts",
   "scripts": {
-    "build": "jsdoc -c jsdoc.json && jsdoc2md ./index.js > FrejaAPI.md && jsdoc -t node_modules/tsd-jsdoc/dist ./index.js -d ./"
+    "build:docs": "jsdoc ./index.js -c jsdoc.json -t node_modules/docdash-extended -d ./docs/jsdoc",
+    "build:markdown": "jsdoc2md ./index.js > FrejaAPI.md",
+    "build:types": "jsdoc ./index.js -c jsdoc.json -t node_modules/tsd-jsdoc/dist -d ./",
+    "build": "npm run build:docs && npm run build:markdown && npm run build:types"
   },
   "author": "Daniel Sörlöv <daniel@sorlov.com>",
   "license": "MIT",
@@ -14,10 +17,17 @@
     "type": "git",
     "url": "https://github.com/dsorlov/jsfreja.git"
   },
+  "funding": {
+    "type": "individual",
+    "url": "https://buymeacoffee.com/sorlov"
+  },  
+  "bugs": "https://github.com/dsorlov/jsfreja/issues",
   "devDependencies": {
+    "clean-jsdoc-theme": "^4.3.0",
     "docdash": "^2.0.2",
     "docdash-extended": "^1.0.2",
     "jsdoc": "^3.6.11",
+    "jsdoc-export-default-interop": "^0.3.1",
     "jsdoc-to-markdown": "^9.0.5",
     "tsd-jsdoc": "^2.5.0",
     "typedoc": "^0.26.11"
