@@ -42,7 +42,7 @@ To get started you can [obtain your own testing certifiate](https://frejaeid.atl
 ### Installation
 
 ```console
-npm install @dsorlov/jsfreja
+npm install freja
 ```
 
 ### Documentation
@@ -57,7 +57,7 @@ The basic and most used function is `initRequest()` method however there is some
 This is a breif example of an authentication request. The following code is initializing the library with a specified pfx and password. Relative paths are ok. Then we set the minimum requested level using [FrejaAPI.RegistrationLevel](FrejaAPI#registrationlevel--enum) for the authentication and which attributes to return. Either the [FrejaAPI.UserAttributeCollections](FrejaAPI#userattributecollections--enum) or the [FrejaAPI.UserAttributes](FrejaAPI#userattributes--enum) can be used to assist in getting the right value.
 
 ```javascript
-import { APIMode, FrejaAPI, RegistrationLevel, UserAttributeCollections } from '@dsorlov/jsfreja';
+import { APIMode, FrejaAPI, RegistrationLevel, UserAttributeCollections } from 'freja';
 
 const frejaApi = new FrejaAPI(APIMode.TEST,'<path-to-your-pfx>','<pfx-password>');
 frejaApi.RegistrationLevel = RegistrationLevel.PLUS;
@@ -89,7 +89,7 @@ This will initiate an authentication request, and poll untill we got a result.
 
 ```javascript
 // @ts-check
-import { APIMode, FrejaAPI, RegistrationLevel, UserAttributeCollections } from '@dsorlov/jsfreja';
+import { APIMode, FrejaAPI, RegistrationLevel, UserAttributeCollections } from 'freja';
 
 //Setup some API testing stuff
 const frejaApi = new FrejaAPI(APIMode.PRODUCTION,'<path-to-pfxfile>','<pfxfile-password>');
