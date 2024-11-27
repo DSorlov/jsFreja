@@ -1,9 +1,9 @@
 <a name="module_freja"></a>
 
 ## freja
-The Freja module will allow you to interact with the Freja eID API. The module is designed to be used in a Node.js environment and will allow you to create authentication and signing requests, as well as manage user information.The module is authored by Daniel Sörlöv <daniel@sorlov.com> and is released under the MIT license.It is not supported by Freja eID, Verisec or any other entity. Use at your own risk.
+The Freja module will allow you to interact with the Freja eID API. The module is designed to be used in a Node.js environment and will allow you to create authentication and signing requests, as well as manage user information.
 
-**Version**: 1.0.0  
+**Version**: 1.0.2  
 
 * [freja](#module_freja)
     * _static_
