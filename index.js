@@ -514,6 +514,11 @@ const FrejaDocumentTypes = Object.freeze({
  * @param {string} authPwd The password for the PFX file.
  * @param {Object} [jwtToken=undefined] The JWT token files ({'x5t': 'file'}).
  * @param {undefined|string|string[]} [caCert=undefined] The path to the CA certificate file(s).
+ * @property {UserAttributes[]} UserAttributes The user attributes to return.
+ * @property {RegistrationLevel} RegistrationLevel The minimum requested level.
+ * @property {ConfirmationMethod} ConfirmationMethod
+ * @property {APIMode} APIMode The API mode.
+ * @property {string} RelyingPartyId The relying party ID (used by integrators only).
  * @throws {Error} If the mode is invalid or if the password is missing.
  * @throws {Error} If the PFX or CA certificate file does not exist. * @example
  */
@@ -535,7 +540,6 @@ class FrejaAPI {
 
     //Public properties
     /**
-     * @property {RegistrationLevel} RegistrationLevel The minimum requested level.
      * @memberof module:freja.FrejaAPI
      * @type RegistrationLevel
      */
@@ -544,7 +548,6 @@ class FrejaAPI {
     set RegistrationLevel(value) { this.#registrationLevel = value; }
 
     /**
-     * @property {ConfirmationMethod} ConfirmationMethod
      * @memberof module:freja.FrejaAPI
      * @type ConfirmationMethod
      */
@@ -552,8 +555,16 @@ class FrejaAPI {
     get ConfirmationMethod() { return this.#confirmationMethod; }
     set ConfirmationMethod(value) { this.#confirmationMethod = value; }
 
+
     /**
-     * @property {UserAttributes[]} UserAttributes The user attributes to return.
+     * @memberof module:freja.FrejaAPI
+     * @type APIMode
+     */
+    #apiMode = APIMode.TEST;
+    get APIMode() { return this.#apiMode; }
+    set APIMode(value) { this.#apiMode = value; }    
+
+    /**
      * @memberof module:freja.FrejaAPI
      * @type Array<UserAttributes>
      */
@@ -562,7 +573,6 @@ class FrejaAPI {
     set UserAttributes(value) { this.#userAttributes = value; }
 
     /**
-     * @property {string} RelyingPartyId The relying party ID (used by integrators only).
      * @memberof module:freja.FrejaAPI
      * @type undefined|string
      */
@@ -626,6 +636,7 @@ class FrejaAPI {
                 //@ts-ignore we are asigning it an array so never mind (it is an empty array in initialization)
                 caCert = [`certs/test_root.pem`];
 
+        this.#apiMode = mode;
         this.#apiBase = mode === APIMode.PRODUCTION ? "prod.frejaeid.com" : "test.frejaeid.com";
         this.#authPfx = readFileSync(authPfx);
         this.#authPwd = authPwd;
@@ -1540,4 +1551,4 @@ class FrejaAPI {
 };
 
 export default FrejaAPI;
-export { FrejaAPI, RequestType, UserInfoType, SignatureType, FrejaIdentifierDisplayType, ConfirmationMethod, RegistrationLevel, UserAttributes };
+export { FrejaAPI, APIMode, RequestType, UserInfoType, SignatureType, FrejaIdentifierDisplayType, ConfirmationMethod, RegistrationLevel, UserAttributes };
