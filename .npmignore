@@ -1,3 +1,7 @@
 .vscode/
+.github/
+.gitignore
+.gitattributes
+docs/
 node_modules/
 certs/prod.pfx
