@@ -1,4 +1,5 @@
 .vscode/
 .git/
+test.js
 node_modules/
 certs/prod.pfx

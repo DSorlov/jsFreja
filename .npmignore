@@ -4,4 +4,5 @@
 .gitattributes
 docs/
 node_modules/
+test.js
 certs/prod.pfx
