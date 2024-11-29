@@ -385,11 +385,10 @@ const FrejaDocumentTypes = Object.freeze({
  * @category Responses
  * @extends IResultMessage
  * @property {boolean} isOk Must be false
- * @property {Object} data
- * @property {number} data.code The error code
- * @property {string} data.message The error message
- * @property {string} data.extendedMessage The extended error message
- * @property {string} data.trace The error trace
+ * @property {number} code The error code
+ * @property {string} message The error message
+ * @property {string} [extendedMessage] The extended error message
+ * @property {string} [trace] The error trace
  */
 
 /**
@@ -1571,6 +1570,11 @@ class FrejaAPI {
                 data = apiMethod + "=" + Buffer.from(jsonData).toString('base64')
                 if (this.#relyingPartyId) {
                     data = data + "&relyingPartyId=" + this.#relyingPartyId;
+                }
+                requestOptions.headers['Content-Length']= data.length;
+            } else {
+                if (this.#relyingPartyId) {
+                    data = "relyingPartyId=" + this.#relyingPartyId;
                 }
                 requestOptions.headers['Content-Length']= data.length;
             }
