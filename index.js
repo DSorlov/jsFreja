@@ -614,7 +614,7 @@ class FrejaAPI {
 
     /**
      * @memberof module:freja.FrejaAPI
-     * @type Array<UserAttributes>
+     * @type Array<FrejaUserAttributes>
      */
     #userAttributes = [];
     get UserAttributes() { return this.#userAttributes; }
@@ -751,6 +751,7 @@ class FrejaAPI {
             }
             if (phoneRegexp.test(userData)) {
                 return {
+                    userInfoType: FrejaUserInfoType.PHONE,
                     userInfo: userData
                 };
             }
