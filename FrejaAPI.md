@@ -3,18 +3,21 @@
 ## freja
 The Freja module will allow you to interact with the Freja eID API. The module is designed to be used in a Node.js environment and will allow you to create authentication and signing requests, as well as manage user information.
 
-**Version**: 1.0.2  
+**Version**: 1.0.3  
 
 * [freja](#module_freja)
     * _static_
         * [.FrejaAPI](#module_freja.FrejaAPI)
-            * [new FrejaAPI(mode, authPfx, authPwd, [jwtToken], [caCert])](#new_module_freja.FrejaAPI_new)
+            * [new FrejaAPI(apiEnvironment, authPfx, authPwd, [trustedJWTCertificates], [trustedCACertificates])](#new_module_freja.FrejaAPI_new)
             * _instance_
                 * [.UserInfoFactory(userData)](#module_freja.FrejaAPI+UserInfoFactory) ⇒ <code>IUserInfo</code>
                 * [.AuthRequest([userInfo], [orgId])](#module_freja.FrejaAPI+AuthRequest) ⇒ <code>Promise.&lt;(IFailureResult\|IInitializationSuccess)&gt;</code>
                 * [.SignRequest(userInfo, title, text, [orgId])](#module_freja.FrejaAPI+SignRequest) ⇒ <code>Promise.&lt;(IFailureResult\|IInitializationSuccess)&gt;</code>
                 * [.SignBufferRequest(userInfo, title, text, data, [orgId])](#module_freja.FrejaAPI+SignBufferRequest) ⇒ <code>Promise.&lt;(IFailureResult\|IInitializationSuccess)&gt;</code>
                 * [.AddOrgIdRequest(userInfo, title, identifier, value, [displayTypes])](#module_freja.FrejaAPI+AddOrgIdRequest)
+                * [.GetOrgIdUserList()](#module_freja.FrejaAPI+GetOrgIdUserList) ⇒ <code>Promise.&lt;(IFailureResult\|IFrejaOrgIdUserList)&gt;</code>
+                * [.UpdateOrgId(identifier, additionalAttributes)](#module_freja.FrejaAPI+UpdateOrgId) ⇒ <code>Promise.&lt;(IFailureResult\|IUpdateSuccessMessage)&gt;</code>
+                * [.RevokeOrgId(identifier)](#module_freja.FrejaAPI+RevokeOrgId) ⇒ <code>Promise.&lt;(IFailureResult\|ISuccessResultMessage)&gt;</code>
                 * [.InitRequest(requestType, userInfo, ...additionalParams)](#module_freja.FrejaAPI+InitRequest) ⇒ <code>Promise.&lt;(IFailureResult\|IInitializationSuccess)&gt;</code>
                 * [.CancelRequest(token)](#module_freja.FrejaAPI+CancelRequest) ⇒ <code>Promise.&lt;(IFailureResult\|ICompletedRequestMessage)&gt;</code>
                 * [.CheckCustodianship(swedishSSN)](#module_freja.FrejaAPI+CheckCustodianship) ⇒ <code>Promise.&lt;(IFailureResult\|ISuccessResultMessage)&gt;</code>
@@ -25,19 +28,21 @@ The Freja module will allow you to interact with the Freja eID API. The module i
                 * [.GetError(errorCode)](#module_freja.FrejaAPI.GetError) ⇒ <code>string</code>
     * _inner_
         * _Enums_
-            * [~APIMode](#module_freja..APIMode) : <code>enum</code>
+            * [~FrejaAPIEnvironment](#module_freja..FrejaAPIEnvironment) : <code>enum</code>
+            * [~FrejaRegistrationState](#module_freja..FrejaRegistrationState) : <code>enum</code>
             * [~FrejaIdentifierDisplayType](#module_freja..FrejaIdentifierDisplayType) : <code>enum</code>
-            * [~RequestType](#module_freja..RequestType) : <code>enum</code>
-            * [~SignatureType](#module_freja..SignatureType) : <code>enum</code>
-            * [~RegistrationLevel](#module_freja..RegistrationLevel) : <code>enum</code>
-            * [~ConfirmationMethod](#module_freja..ConfirmationMethod) : <code>enum</code>
-            * [~UserAttributes](#module_freja..UserAttributes) : <code>enum</code>
-            * [~UserAttributeCollections](#module_freja..UserAttributeCollections) : <code>enum</code>
-            * [~RequestStatus](#module_freja..RequestStatus) : <code>enum</code>
+            * [~FrejaRequestType](#module_freja..FrejaRequestType) : <code>enum</code>
+            * [~FrejaSignatureType](#module_freja..FrejaSignatureType) : <code>enum</code>
+            * [~FrejaRegistrationLevel](#module_freja..FrejaRegistrationLevel) : <code>enum</code>
+            * [~FrejaConfirmationMethod](#module_freja..FrejaConfirmationMethod) : <code>enum</code>
+            * [~FrejaUserAttributes](#module_freja..FrejaUserAttributes) : <code>enum</code>
+            * [~FrejaUserAttributeCollections](#module_freja..FrejaUserAttributeCollections) : <code>enum</code>
+            * [~FrejaRequestStatus](#module_freja..FrejaRequestStatus) : <code>enum</code>
             * [~FrejaDocumentTypes](#module_freja..FrejaDocumentTypes) : <code>enum</code>
         * _Freja_
             * [~FrejaUserAddressType](#module_freja..FrejaUserAddressType) : <code>enum</code>
             * [~FrejaUserAddressSource](#module_freja..FrejaUserAddressSource) : <code>enum</code>
+            * [~IFrejaOrgIdUserInfo](#module_freja..IFrejaOrgIdUserInfo) : <code>Object</code>
             * [~IFrejaUserOrganisationName](#module_freja..IFrejaUserOrganisationName) : <code>Object</code>
             * [~IFrejaUserAddress](#module_freja..IFrejaUserAddress) : <code>Object</code>
             * [~IFrejaUserDocument](#module_freja..IFrejaUserDocument) : <code>Object</code>
@@ -45,20 +50,22 @@ The Freja module will allow you to interact with the Freja eID API. The module i
             * [~IFrejaUserAddOrganisation](#module_freja..IFrejaUserAddOrganisation) : <code>Object</code>
             * [~IFrejaSignNotification](#module_freja..IFrejaSignNotification) : <code>Object</code>
             * [~IFrejaUserOrganisationAttributes](#module_freja..IFrejaUserOrganisationAttributes) : <code>Object</code>
-            * [~IFrejaUserInfo](#module_freja..IFrejaUserInfo) : <code>Object</code>
+            * [~IFrejaUserDetails](#module_freja..IFrejaUserDetails) : <code>Object</code>
             * [~IFrejaServiceData](#module_freja..IFrejaServiceData) : <code>Object</code>
             * [~IFrejaUserContact](#module_freja..IFrejaUserContact) : <code>Object</code>
             * [~IFrejaResponse](#module_freja..IFrejaResponse) : <code>Object</code>
             * [~IFrejaSignatureData](#module_freja..IFrejaSignatureData) : <code>Object</code>
         * _Responses_
             * [~IResultMessage](#module_freja..IResultMessage) : <code>Object</code>
+            * [~IFrejaOrgIdUserList](#module_freja..IFrejaOrgIdUserList) : <code>Object</code>
             * [~ISuccessResultMessage](#module_freja..ISuccessResultMessage) : <code>Object</code>
+            * [~IUpdateSuccessMessage](#module_freja..IUpdateSuccessMessage) : <code>Object</code>
             * [~IFailureResult](#module_freja..IFailureResult) : <code>Object</code>
             * [~IInitializationSuccess](#module_freja..IInitializationSuccess) : <code>Object</code>
             * [~IRequestStatusMessage](#module_freja..IRequestStatusMessage) : <code>Object</code>
             * [~ICompletedRequestMessage](#module_freja..ICompletedRequestMessage) : <code>Object</code>
         * _UserInfo_
-            * [~UserInfo](#module_freja..UserInfo) : <code>enum</code>
+            * [~UserInfoType](#module_freja..UserInfoType) : <code>enum</code>
             * [~ISocialSecurityNumber](#module_freja..ISocialSecurityNumber) : <code>Object</code>
             * [~IUserInfo](#module_freja..IUserInfo) : <code>Object</code>
             * [~IEmailUserInfo](#module_freja..IEmailUserInfo) : <code>Object</code>
@@ -71,15 +78,28 @@ The Freja module will allow you to interact with the Freja eID API. The module i
 
 ### freja.FrejaAPI
 **Kind**: static class of [<code>freja</code>](#module_freja)  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| UserAttributes | <code>Array.&lt;FrejaUserAttributes&gt;</code> | The user attributes to return. |
+| RegistrationLevel | <code>FrejaRegistrationLevel</code> | The minimum requested level. |
+| ConfirmationMethod | <code>FrejaConfirmationMethod</code> |  |
+| APIEnvironment | <code>APIEnvironment</code> | The API mode. |
+| RelyingPartyId | <code>string</code> | The relying party ID (used by integrators only). |
+
 
 * [.FrejaAPI](#module_freja.FrejaAPI)
-    * [new FrejaAPI(mode, authPfx, authPwd, [jwtToken], [caCert])](#new_module_freja.FrejaAPI_new)
+    * [new FrejaAPI(apiEnvironment, authPfx, authPwd, [trustedJWTCertificates], [trustedCACertificates])](#new_module_freja.FrejaAPI_new)
     * _instance_
         * [.UserInfoFactory(userData)](#module_freja.FrejaAPI+UserInfoFactory) ⇒ <code>IUserInfo</code>
         * [.AuthRequest([userInfo], [orgId])](#module_freja.FrejaAPI+AuthRequest) ⇒ <code>Promise.&lt;(IFailureResult\|IInitializationSuccess)&gt;</code>
         * [.SignRequest(userInfo, title, text, [orgId])](#module_freja.FrejaAPI+SignRequest) ⇒ <code>Promise.&lt;(IFailureResult\|IInitializationSuccess)&gt;</code>
         * [.SignBufferRequest(userInfo, title, text, data, [orgId])](#module_freja.FrejaAPI+SignBufferRequest) ⇒ <code>Promise.&lt;(IFailureResult\|IInitializationSuccess)&gt;</code>
         * [.AddOrgIdRequest(userInfo, title, identifier, value, [displayTypes])](#module_freja.FrejaAPI+AddOrgIdRequest)
+        * [.GetOrgIdUserList()](#module_freja.FrejaAPI+GetOrgIdUserList) ⇒ <code>Promise.&lt;(IFailureResult\|IFrejaOrgIdUserList)&gt;</code>
+        * [.UpdateOrgId(identifier, additionalAttributes)](#module_freja.FrejaAPI+UpdateOrgId) ⇒ <code>Promise.&lt;(IFailureResult\|IUpdateSuccessMessage)&gt;</code>
+        * [.RevokeOrgId(identifier)](#module_freja.FrejaAPI+RevokeOrgId) ⇒ <code>Promise.&lt;(IFailureResult\|ISuccessResultMessage)&gt;</code>
         * [.InitRequest(requestType, userInfo, ...additionalParams)](#module_freja.FrejaAPI+InitRequest) ⇒ <code>Promise.&lt;(IFailureResult\|IInitializationSuccess)&gt;</code>
         * [.CancelRequest(token)](#module_freja.FrejaAPI+CancelRequest) ⇒ <code>Promise.&lt;(IFailureResult\|ICompletedRequestMessage)&gt;</code>
         * [.CheckCustodianship(swedishSSN)](#module_freja.FrejaAPI+CheckCustodianship) ⇒ <code>Promise.&lt;(IFailureResult\|ISuccessResultMessage)&gt;</code>
@@ -91,7 +111,7 @@ The Freja module will allow you to interact with the Freja eID API. The module i
 
 <a name="new_module_freja.FrejaAPI_new"></a>
 
-#### new FrejaAPI(mode, authPfx, authPwd, [jwtToken], [caCert])
+#### new FrejaAPI(apiEnvironment, authPfx, authPwd, [trustedJWTCertificates], [trustedCACertificates])
 The main Freja API class.
 
 **Throws**:
@@ -102,11 +122,11 @@ The main Freja API class.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| mode | <code>APIMode</code> | The API mode. |
+| apiEnvironment | <code>FrejaAPIEnvironment</code> | The API mode. |
 | authPfx | <code>string</code> | The path to the PFX file. |
 | authPwd | <code>string</code> | The password for the PFX file. |
-| [jwtToken] | <code>Object</code> | The JWT token files ({'x5t': 'file'}). |
-| [caCert] | <code>undefined</code> \| <code>string</code> \| <code>Array.&lt;string&gt;</code> | The path to the CA certificate file(s). |
+| [trustedJWTCertificates] | <code>Object</code> | The JWT token files ({'x5t': 'file'}). |
+| [trustedCACertificates] | <code>undefined</code> \| <code>string</code> \| <code>Array.&lt;string&gt;</code> | The path to the CA certificate file(s). |
 
 <a name="module_freja.FrejaAPI+UserInfoFactory"></a>
 
@@ -185,6 +205,38 @@ Initialize an organisation id request (shorthand method).
 | value | <code>string</code> |  | The identifier value |
 | [displayTypes] | <code>Array.&lt;FrejaIdentifierDisplayType&gt;</code> | <code>[FrejaIdentifierDisplayType.QR_CODE, FrejaIdentifierDisplayType.TEXT]</code> | The display types |
 
+<a name="module_freja.FrejaAPI+GetOrgIdUserList"></a>
+
+#### frejaAPI.GetOrgIdUserList() ⇒ <code>Promise.&lt;(IFailureResult\|IFrejaOrgIdUserList)&gt;</code>
+Gets a full list of issued organisation ids
+
+**Kind**: instance method of [<code>FrejaAPI</code>](#module_freja.FrejaAPI)  
+**Access**: public  
+<a name="module_freja.FrejaAPI+UpdateOrgId"></a>
+
+#### frejaAPI.UpdateOrgId(identifier, additionalAttributes) ⇒ <code>Promise.&lt;(IFailureResult\|IUpdateSuccessMessage)&gt;</code>
+Updates a issued organisation id with additional attributes
+
+**Kind**: instance method of [<code>FrejaAPI</code>](#module_freja.FrejaAPI)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| identifier | <code>string</code> | The custom identifier to delete |
+| additionalAttributes | <code>Array.&lt;IFrejaUserOrganisationAttributes&gt;</code> | Additional attributes to update |
+
+<a name="module_freja.FrejaAPI+RevokeOrgId"></a>
+
+#### frejaAPI.RevokeOrgId(identifier) ⇒ <code>Promise.&lt;(IFailureResult\|ISuccessResultMessage)&gt;</code>
+Deletes a issued organisation id
+
+**Kind**: instance method of [<code>FrejaAPI</code>](#module_freja.FrejaAPI)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| identifier | <code>string</code> | The custom identifier to delete |
+
 <a name="module_freja.FrejaAPI+InitRequest"></a>
 
 #### frejaAPI.InitRequest(requestType, userInfo, ...additionalParams) ⇒ <code>Promise.&lt;(IFailureResult\|IInitializationSuccess)&gt;</code>
@@ -195,7 +247,7 @@ Initialize an authentication or signature request.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| requestType | <code>RequestType</code> | The type of request. |
+| requestType | <code>FrejaRequestType</code> | The type of request. |
 | userInfo | <code>string</code> \| <code>undefined</code> \| <code>object</code> | The user information used to initialize, leave empty for inferred. |
 | ...additionalParams | <code>any</code> | Additional parameters for the request. |
 
@@ -273,9 +325,9 @@ Translate a code into a message
 | --- | --- | --- |
 | errorCode | <code>number</code> | The error code |
 
-<a name="module_freja..APIMode"></a>
+<a name="module_freja..FrejaAPIEnvironment"></a>
 
-### freja~APIMode : <code>enum</code>
+### freja~FrejaAPIEnvironment : <code>enum</code>
 **Kind**: inner enum of [<code>freja</code>](#module_freja)  
 **Category**: Enums  
 **Read only**: true  
@@ -285,6 +337,20 @@ Translate a code into a message
 | --- | --- | --- |
 | PRODUCTION | <code>string</code> | "PRODUCTION" |
 | TEST | <code>string</code> | "TEST" |
+
+<a name="module_freja..FrejaRegistrationState"></a>
+
+### freja~FrejaRegistrationState : <code>enum</code>
+**Kind**: inner enum of [<code>freja</code>](#module_freja)  
+**Category**: Enums  
+**Read only**: true  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| EXTENDED | <code>string</code> | "EXTENDED" |
+| VETTING_CONFIRMED | <code>string</code> | "VETTING_CONFIRMED" |
+| PLUS | <code>string</code> | "PLUS" |
 
 <a name="module_freja..FrejaIdentifierDisplayType"></a>
 
@@ -299,9 +365,9 @@ Translate a code into a message
 | QR_CODE | <code>string</code> | "QR_CODE" |
 | TEXT | <code>string</code> | "TEXT" |
 
-<a name="module_freja..RequestType"></a>
+<a name="module_freja..FrejaRequestType"></a>
 
-### freja~RequestType : <code>enum</code>
+### freja~FrejaRequestType : <code>enum</code>
 **Kind**: inner enum of [<code>freja</code>](#module_freja)  
 **Category**: Enums  
 **Read only**: true  
@@ -315,9 +381,9 @@ Translate a code into a message
 | ORGID_SIGN | <code>string</code> | "I" |
 | ORGID_MGMT | <code>string</code> | "M" |
 
-<a name="module_freja..SignatureType"></a>
+<a name="module_freja..FrejaSignatureType"></a>
 
-### freja~SignatureType : <code>enum</code>
+### freja~FrejaSignatureType : <code>enum</code>
 **Kind**: inner enum of [<code>freja</code>](#module_freja)  
 **Category**: Enums  
 **Read only**: true  
@@ -329,9 +395,9 @@ Translate a code into a message
 | EXTENDED | <code>string</code> | "EXTENDED" |
 | XML_MINAMEDDELANDEN | <code>string</code> | "XML_MINAMEDDELANDEN" |
 
-<a name="module_freja..RegistrationLevel"></a>
+<a name="module_freja..FrejaRegistrationLevel"></a>
 
-### freja~RegistrationLevel : <code>enum</code>
+### freja~FrejaRegistrationLevel : <code>enum</code>
 **Kind**: inner enum of [<code>freja</code>](#module_freja)  
 **Category**: Enums  
 **Read only**: true  
@@ -343,9 +409,9 @@ Translate a code into a message
 | EXTENDED | <code>string</code> | "EXTENDED" |
 | PLUS | <code>string</code> | "PLUS" |
 
-<a name="module_freja..ConfirmationMethod"></a>
+<a name="module_freja..FrejaConfirmationMethod"></a>
 
-### freja~ConfirmationMethod : <code>enum</code>
+### freja~FrejaConfirmationMethod : <code>enum</code>
 **Kind**: inner enum of [<code>freja</code>](#module_freja)  
 **Category**: Enums  
 **Read only**: true  
@@ -356,9 +422,9 @@ Translate a code into a message
 | DEFAULT | <code>string</code> | "DEFAULT" |
 | DEFAULT_AND_FACE | <code>string</code> | "DEFAULT_AND_FACE" |
 
-<a name="module_freja..UserAttributes"></a>
+<a name="module_freja..FrejaUserAttributes"></a>
 
-### freja~UserAttributes : <code>enum</code>
+### freja~FrejaUserAttributes : <code>enum</code>
 **Kind**: inner enum of [<code>freja</code>](#module_freja)  
 **Category**: Enums  
 **Read only**: true  
@@ -380,9 +446,9 @@ Translate a code into a message
 | RELYING_PARTY_USER_ID | <code>string</code> | The relying party user ID |
 | INTEGRATOR_SPECIFIC_USER_ID | <code>string</code> | The integrator specific user ID |
 
-<a name="module_freja..UserAttributeCollections"></a>
+<a name="module_freja..FrejaUserAttributeCollections"></a>
 
-### freja~UserAttributeCollections : <code>enum</code>
+### freja~FrejaUserAttributeCollections : <code>enum</code>
 **Kind**: inner enum of [<code>freja</code>](#module_freja)  
 **Category**: Enums  
 **Read only**: true  
@@ -395,9 +461,9 @@ Translate a code into a message
 | COMMON_AUTH | <code>Array.&lt;UserAttributes&gt;</code> | Attributes commonly used for authentication (Requires EXTENDED or PLUS registration level) |
 | COMMON_SIGN | <code>Array.&lt;UserAttributes&gt;</code> | Attributes commonly used for signing (Requires EXTENDED or PLUS registration level) |
 
-<a name="module_freja..RequestStatus"></a>
+<a name="module_freja..FrejaRequestStatus"></a>
 
-### freja~RequestStatus : <code>enum</code>
+### freja~FrejaRequestStatus : <code>enum</code>
 **Kind**: inner enum of [<code>freja</code>](#module_freja)  
 **Category**: Enums  
 **Read only**: true  
@@ -455,6 +521,22 @@ Translate a code into a message
 | Name | Type | Description |
 | --- | --- | --- |
 | GOVERNMENT_REGISTRY | <code>string</code> | "GOVERNMENT_REGISTRY" |
+
+<a name="module_freja..IFrejaOrgIdUserInfo"></a>
+
+### freja~IFrejaOrgIdUserInfo : <code>Object</code>
+**Kind**: inner typedef of [<code>freja</code>](#module_freja)  
+**Category**: Freja  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| identifier | <code>string</code> | Title of the Organisation ID to be displayed to the end user |
+| identifierName | <code>string</code> | Display name of specific organisation identifier |
+| title | <code>string</code> | Value of specific organisation identifier |
+| [ssn] | <code>string</code> | User SSN in international format if exist |
+| country | <code>string</code> | User country |
+| registrationState | <code>FrejaRegistrationState</code> | The extended error message |
 
 <a name="module_freja..IFrejaUserOrganisationName"></a>
 
@@ -555,9 +637,9 @@ Translate a code into a message
 | value | <code>string</code> | The attribute value |
 | displayText | <code>string</code> | The attribute display text |
 
-<a name="module_freja..IFrejaUserInfo"></a>
+<a name="module_freja..IFrejaUserDetails"></a>
 
-### freja~IFrejaUserInfo : <code>Object</code>
+### freja~IFrejaUserDetails : <code>Object</code>
 **Kind**: inner typedef of [<code>freja</code>](#module_freja)  
 **Category**: Freja  
 **Properties**
@@ -584,7 +666,7 @@ Translate a code into a message
 | --- | --- | --- |
 | freja.userInfo | <code>IUserInfo</code> | The user information object |
 | [freja.relyingPartyUserId] | <code>string</code> | The relying party user ID |
-| [freja.registrationLevel] | <code>RegistrationLevel</code> | The registration level |
+| [freja.registrationLevel] | <code>FrejaRegistrationLevel</code> | The registration level |
 | [freja.customIdentifier] | <code>string</code> | The custom identifier |
 
 <a name="module_freja..IFrejaUserContact"></a>
@@ -629,7 +711,7 @@ Translate a code into a message
 
 | Name | Type | Description |
 | --- | --- | --- |
-| type | <code>SignatureType</code> | The signature type |
+| type | <code>FrejaSignatureType</code> | The signature type |
 | timestamp | <code>Date</code> | The date of the signature |
 | payload | <code>String</code> | The signed data |
 | transactionId | <code>String</code> | The id of the signing transaction from Freja |
@@ -650,6 +732,19 @@ Translate a code into a message
 | --- | --- |
 | isOk | <code>boolean</code> | 
 
+<a name="module_freja..IFrejaOrgIdUserList"></a>
+
+### freja~IFrejaOrgIdUserList : <code>Object</code>
+**Kind**: inner typedef of [<code>freja</code>](#module_freja)  
+**Extends**: <code>IResultMessage</code>  
+**Category**: Responses  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| isOk | <code>boolean</code> |  |
+| users | <code>Array.&lt;IFrejaOrgIdUserInfo&gt;</code> | The organisation information |
+
 <a name="module_freja..ISuccessResultMessage"></a>
 
 ### freja~ISuccessResultMessage : <code>Object</code>
@@ -663,6 +758,21 @@ Translate a code into a message
 | isOk | <code>boolean</code> | 
 | data | <code>any</code> | 
 
+<a name="module_freja..IUpdateSuccessMessage"></a>
+
+### freja~IUpdateSuccessMessage : <code>Object</code>
+**Kind**: inner typedef of [<code>freja</code>](#module_freja)  
+**Extends**: <code>IResultMessage</code>  
+**Category**: Responses  
+**Properties**
+
+| Name | Type |
+| --- | --- |
+| isOk | <code>boolean</code> | 
+| added | <code>number</code> | 
+| updated | <code>number</code> | 
+| deleted | <code>number</code> | 
+
 <a name="module_freja..IFailureResult"></a>
 
 ### freja~IFailureResult : <code>Object</code>
@@ -674,11 +784,10 @@ Translate a code into a message
 | Name | Type | Description |
 | --- | --- | --- |
 | isOk | <code>boolean</code> | Must be false |
-| data | <code>Object</code> |  |
-| data.code | <code>number</code> | The error code |
-| data.message | <code>string</code> | The error message |
-| data.extendedMessage | <code>string</code> | The extended error message |
-| data.trace | <code>string</code> | The error trace |
+| code | <code>number</code> | The error code |
+| message | <code>string</code> | The error message |
+| [extendedMessage] | <code>string</code> | The extended error message |
+| [trace] | <code>string</code> | The error trace |
 
 <a name="module_freja..IInitializationSuccess"></a>
 
@@ -706,7 +815,7 @@ Translate a code into a message
 | Name | Type | Description |
 | --- | --- | --- |
 | isOk | <code>boolean</code> | Must be true |
-| status | <code>RequestStatus</code> | The transaction status |
+| status | <code>FrejaRequestStatus</code> | The transaction status |
 | isFinal | <code>boolean</code> | If the transaction is completed or should be checked again |
 
 <a name="module_freja..ICompletedRequestMessage"></a>
@@ -720,13 +829,13 @@ Translate a code into a message
 | Name | Type | Description |
 | --- | --- | --- |
 | isOk | <code>boolean</code> | Must be true |
-| status | <code>RequestStatus</code> | The transaction status |
+| status | <code>FrejaRequestStatus</code> | The transaction status |
 | data | <code>IFrejaResponse</code> | The results of the request |
 | isFinal | <code>boolean</code> | Always true |
 
-<a name="module_freja..UserInfo"></a>
+<a name="module_freja..UserInfoType"></a>
 
-### freja~UserInfo : <code>enum</code>
+### freja~UserInfoType : <code>enum</code>
 **Kind**: inner enum of [<code>freja</code>](#module_freja)  
 **Category**: UserInfo  
 **Read only**: true  
@@ -761,7 +870,7 @@ Translate a code into a message
 
 | Name | Type | Description |
 | --- | --- | --- |
-| userInfoType | <code>UserInfoType</code> | The type of user information |
+| userInfoType | <code>FrejaUserInfoType</code> | The type of user information |
 | userInfo | <code>string</code> \| <code>ISocialSecurityNumber</code> | The user information |
 
 <a name="module_freja..IEmailUserInfo"></a>
@@ -774,7 +883,7 @@ Translate a code into a message
 
 | Name | Type | Description |
 | --- | --- | --- |
-| userInfoType | <code>UserInfoType</code> | Must be "EMAIL" |
+| userInfoType | <code>FrejaUserInfoType</code> | Must be "EMAIL" |
 | userInfo | <code>string</code> | The email address |
 
 <a name="module_freja..ISSNUserInfo"></a>
@@ -787,7 +896,7 @@ Translate a code into a message
 
 | Name | Type | Description |
 | --- | --- | --- |
-| userInfoType | <code>UserInfoType</code> | Must be "EMAIL" |
+| userInfoType | <code>FrejaUserInfoType</code> | Must be "EMAIL" |
 | userInfo | <code>ISocialSecurityNumber</code> | The social security number |
 
 <a name="module_freja..IInferredUserInfo"></a>
@@ -800,7 +909,7 @@ Translate a code into a message
 
 | Name | Type | Description |
 | --- | --- | --- |
-| userInfoType | <code>UserInfoType</code> | Must be "INFERRRED" |
+| userInfoType | <code>FrejaUserInfoType</code> | Must be "INFERRRED" |
 | userInfo | <code>string</code> | Must be "N/A" |
 
 <a name="module_freja..IPhoneUserInfo"></a>
@@ -813,7 +922,7 @@ Translate a code into a message
 
 | Name | Type | Description |
 | --- | --- | --- |
-| userInfoType | <code>UserInfoType</code> | Must be "PHONE" |
+| userInfoType | <code>FrejaUserInfoType</code> | Must be "PHONE" |
 | userInfo | <code>string</code> | The email address |
 
 <a name="module_freja..IOrgIdUserInfo"></a>
@@ -826,6 +935,6 @@ Translate a code into a message
 
 | Name | Type | Description |
 | --- | --- | --- |
-| userInfoType | <code>UserInfoType</code> | Must be "ORGID" |
+| userInfoType | <code>FrejaUserInfoType</code> | Must be "ORGID" |
 | userInfo | <code>string</code> | The email address |
 

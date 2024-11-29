@@ -17,7 +17,7 @@
 
 ## About
 
-This project is created as a simple way of interacting with the [Freja REST API](https://frejaeid.atlassian.net/wiki/spaces/DOC/overview) from [Node.js](https://nodejs.org/en). The problem is not that the REST API is hard to use in it self but rather to make a friendlier way to inteact interact and integrate. The **jsfreja** module commes with typings, jsdoc typings, and practical shortcut functions to common functions and actions. You do not have to encode or decode, veryify and keep track of what URIs are used for what. The module does that for you. Kind of like magic.
+This project is created as a simple way of interacting with the [Freja REST API](https://frejaeid.atlassian.net/wiki/spaces/DOC/overview) from [Node.js](https://nodejs.org/en). The problem is not that the REST API is hard to use in it self but rather to make a friendlier way to inteact interact and integrate. The **freja** module commes with typings, jsdoc typings, and practical shortcut functions to common functions and actions. You do not have to encode or decode, veryify and keep track of what URIs are used for what. The module does that for you. Kind of like magic.
 
 This module can interact with most parts of Freja.
 
@@ -54,14 +54,14 @@ There is also some [documentation](/docs/jsdoc) to help you get insights to the 
 
 The basic and most used function is `initRequest()` method however there is some shortcut methods defined such as `initAuth()`, `initSign()`, `initSignBuffer()` and `initAddOrganisationId()` which all have some good default values set so you dont need to send the arguments to `initRequest()`.
 
-This is a breif example of an authentication request. The following code is initializing the library with a specified pfx and password. Relative paths are ok. Then we set the minimum requested level using [FrejaAPI.RegistrationLevel](FrejaAPI#registrationlevel--enum) for the authentication and which attributes to return. Either the [FrejaAPI.UserAttributeCollections](FrejaAPI#userattributecollections--enum) or the [FrejaAPI.UserAttributes](FrejaAPI#userattributes--enum) can be used to assist in getting the right value.
+This is a breif example of an authentication request. The following code is initializing the library with a specified pfx and password. Relative paths are ok. Then we set the minimum requested level using [FrejaAPI.FrejaRegistrationLevel](FrejaAPI#frejafrejaregistrationlevel--enum) for the authentication and which attributes to return. Either the [FrejaAPI.FrejaUserAttributeCollections](FrejaAPI#frejafrejauserattributecollections--enum) or the [FrejaAPI.FrejaUserAttributes](FrejaAPI#frejafrejauserattributes--enum) can be used to assist in getting the right value.
 
 ```javascript
-import { APIMode, FrejaAPI, RegistrationLevel, UserAttributeCollections } from 'freja';
+import { FrejaAPIEnvironment, FrejaAPI, FrejaRegistrationLevel, FrejaUserAttributeCollections } from 'freja';
 
-const frejaApi = new FrejaAPI(APIMode.TEST,'<path-to-your-pfx>','<pfx-password>');
-frejaApi.RegistrationLevel = RegistrationLevel.PLUS;
-frejaApi.UserAttributes = UserAttributeCollections.ALL_EXTENDED;
+const frejaApi = new FrejaAPI(FrejaAPIEnvironment.TEST,'<path-to-your-pfx>','<pfx-password>');
+frejaApi.RegistrationLevel = FrejaRegistrationLevel.PLUS;
+frejaApi.UserAttributes = FrejaUserAttributeCollections.ALL_EXTENDED;
 ```
 
 Next let us execute the request. The following code with get us a code to use with a QR-reader or in a mobile app. You can also supply arguments to the initAuthRequest to make sure a specific user is targeted.
@@ -70,7 +70,7 @@ Next let us execute the request. The following code with get us a code to use wi
 let result = await frejaApi.InitAuthRequest();
 ```
 
-All operations we execute returns objects of the [IResultMessage](FrejaAPI#iresultmessage--object) or one of its derrative classes. They all have a `isOk` property (boolean). `isOk` means the operation was successfull.
+All operations we execute returns objects of the [IResultMessage](FrejaAPI#frejairesultmessage--object) or one of its derrative classes. They all have a `isOk` property (boolean). `isOk` means the operation was successfull.
 
 Next we define a function to check status in the test script. This function will be called every 2.5s as suggested by Freja. We check the response and if its property `isFinal` (boolean) is true: we have got a final result. Otherwise we just continue pulling here. Also a good expansion of this code could be to also handle fault stats where the `isOk` flag is false.
 
@@ -78,7 +78,7 @@ Next we define a function to check status in the test script. This function will
 let checkResult = await frejaApi.InquireRequest(result.token)
 ```
 
-Errors will have the `isOk` set to false and `code` field set to something in the [FrejaAPI.FrejaAPIErrors](FrejaAPI#frejaapierrors--enum) collection which can help you troubleshoot.
+Errors will have the `isOk` set to false and `code` field set to something you can lookup in [FrejaAPI.GetErrorCode(<number>)](FrejaAPI#frejaapigeterrorerrorcode--string) if you need a verbose message.
 
 When an authentication request finishes you will get a [ICompletedRequestMessage](FrejaAPI#icompletedrequestmessage--object) where the `data` property will be a [IFrejaUserInfo](FrejaAPI#ifrejauserinfo--object) where you will find your requested attributes for the user.
 
@@ -89,15 +89,15 @@ This will initiate an authentication request, and poll untill we got a result.
 
 ```javascript
 // @ts-check
-import { APIMode, FrejaAPI, RegistrationLevel, UserAttributeCollections } from 'freja';
+import { FrejaAPIEnvironment, FrejaAPI, FrejaRegistrationLevel, FrejaUserAttributeCollections } from 'freja';
 
 //Setup some API testing stuff
-const frejaApi = new FrejaAPI(APIMode.PRODUCTION,'<path-to-pfxfile>','<pfxfile-password>');
-frejaApi.RegistrationLevel = RegistrationLevel.PLUS;
-frejaApi.UserAttributes = UserAttributeCollections.ALL_EXTENDED;
+const frejaApi = new FrejaAPI(FrejaAPIEnvironment.PRODUCTION,'<path-to-pfxfile>','<pfxfile-password>');
+frejaApi.RegistrationLevel = FrejaRegistrationLevel.PLUS;
+frejaApi.UserAttributes = FrejaUserAttributeCollections.ALL_EXTENDED;
 
 // Initiate an authentication request
-var result = await frejaApi.InitAuthRequest('<identifier>');
+var result = await frejaApi.AuthRequest('<identifier>');
 
 // Check if the request was successful
 if (result.isOk) {
@@ -160,13 +160,20 @@ frejaApi.CancelRequest(<token:string>);
 frejaApi.InquireRequest(<token:string>);
 ```
 
-Shortcut methods to make life easier are most commonly used
+Shortcut methods to make life easier are most commonly used.
 
 ```javascript
-frejaApi.InitAuthRequest(<userInfo:IUserInfo|string|undefined>)
-frejaApi.InitSignRequest(<userInfo:IUserInfo|string|undefined>,<title:string>,<text:string>);
-frejaApi.InitSignBufferRequest(<userInfo:IUserInfo|string|undefined>,<title:string>,<text:string>, <data:Buffer>);
+frejaApi.AuthRequest(<userInfo:IUserInfo|string|undefined>)
+frejaApi.SignRequest(<userInfo:IUserInfo|string|undefined>,<title:string>,<text:string>);
+frejaApi.SignBufferRequest(<userInfo:IUserInfo|string|undefined>,<title:string>,<text:string>, <data:Buffer>);
 frejaApi.AddOrgIdRequest(<userInfo:IUserInfo|string>,<org-name:string>,<attribute-name:string>,<attribute-value:string>);
+```
+
+OrgId Specific
+
+```javascript
+frejaApi.UpdateOrgId(<identifier:string>,<additionalAttributeList[]>);
+frejaApi.RevokeOrgId(<identifier:string>);
 ```
 
 Not so commonly used functions
@@ -183,23 +190,24 @@ The additionalParams object is used when doing advanced Requests directly via `I
 
 The most common are (for all types of requests)
 
-* `userInfo` **{[IUserInfo](/FrejaAPI#iuserinfo--object)}** the user info object (see all inherited IUserInfo types in doc)
-* `userInfoType` **{[UserInfoType](/FrejaAPI#userinfotype--enum)}** the user info object type
-* `attributesToReturn` **{Array<[UserAttributes](/FrejaAPI#userattributes--enum)>}** to return if successfull.
-* `userConfirmationMethod` **{[ConfirmationMethod](/FrejaAPI#confirmationmethod--enum)}** to use for the request.
-* `minRegistrationLevel` **{[RegistrationLevel](/FrejaAPI#registrationlevel--enum)}** the minimum level to use for the request.
+* `userInfo` **{[IUserInfo](/FrejaAPI#frejaiuserinfo--object)}** the user info object (see all inherited IUserInfo types in doc)
+* `userInfoType` **{[FrejaUserInfoType](/FrejaAPI#frejafrejauserinfotype--enum)}** the user info object type
+* `attributesToReturn` **{Array<[UserAttributes](/FrejaAPI#frejafrejauserattributes--enum)>}** to return if successfull.
+* `userConfirmationMethod` **{[FrejaConfirmationMethod](/FrejaAPI#frejafrejaconfirmationmethod--enum)}** to use for the request.
+* `minRegistrationLevel` **{[FrejaRegistrationLevel](/FrejaAPI#frejafrejaregistrationlevel--enum)}** the minimum level to use for the request.
 
 For requests of signing (both standard and orgid signing)
 
 * `waitDays` **{Number}** how long the transaction should live. 1-30 days (default is 1 day)
 * `text` **{String}** The message presented when signing
-* `signatureType` **{[SignatureType](/FrejaAPI#signaturetype--enum)}** for the signature you wish in the response
+* `signatureType` **{[FrejaSignatureType](/FrejaAPI#frejafrejasignaturetype--enum)}** for the signature you wish in the response
 * `binaryData` **{Buffer}** a buffer with any data to include in the signature
-* `notification` **{[IFrejaSignNotification](/FrejaAPI#ifrejasignnotification--object)}** describing the user device notification
+* `notification` **{[IFrejaSignNotification](/FrejaAPI#frejaifrejasignnotification--object)}** describing the user device notification
 
 For adding a orgId (only when adding a new orgid)
 * `waitDays` **{Number}** how long the transaction should live. 1-30 days (default is 1 day)
-* `orgId` **{[IFrejaUserAddOrganisation](/FrejaAPI#ifrejauseraddorganisation--object)}** describing the orgId
+* `orgId` **{[IFrejaUserAddOrganisation](/FrejaAPI#frejaifrejauseraddorganisation--object)}** describing the orgId
+* `attributes` **{[IFrejaAddUserOrganisationAttributes](/FrejaAPI#frejaifrejauserorganisationattributes--object)[]}**
 
 ## Roadmap
 

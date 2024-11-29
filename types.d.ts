@@ -2,39 +2,44 @@
  * <p>The Freja module will allow you to interact with the Freja eID API. The module is designed to be used in a Node.js environment and will allow you to create authentication and signing requests, as well as manage user information.</p>
  */
 declare module "freja" {
-    const enum APIMode {
+    const enum FrejaAPIEnvironment {
         PRODUCTION,
         TEST
+    }
+    const enum FrejaRegistrationState {
+        EXTENDED,
+        VETTING_CONFIRMED,
+        PLUS
     }
     const enum FrejaIdentifierDisplayType {
         QR_CODE,
         TEXT
     }
-    enum UserInfo {
+    enum UserInfoType {
         INFERRED,
         EMAIL,
         PHONE,
         SSN,
         ORGID
     }
-    const enum RequestType {
+    const enum FrejaRequestType {
         AUTH,
         SIGN,
         ORGID_AUTH,
         ORGID_SIGN,
         ORGID_MGMT
     }
-    const enum SignatureType {
+    const enum FrejaSignatureType {
         SIMPLE,
         EXTENDED,
         XML_MINAMEDDELANDEN
     }
-    const enum RegistrationLevel {
+    const enum FrejaRegistrationLevel {
         BASIC,
         EXTENDED,
         PLUS
     }
-    const enum ConfirmationMethod {
+    const enum FrejaConfirmationMethod {
         DEFAULT,
         DEFAULT_AND_FACE
     }
@@ -45,7 +50,7 @@ declare module "freja" {
     const enum FrejaUserAddressSource {
         GOVERNMENT_REGISTRY
     }
-    const enum UserAttributes {
+    const enum FrejaUserAttributes {
         BASIC_USER_INFO,
         EMAIL_ADDRESS,
         ALL_EMAIL_ADDRESSES,
@@ -60,13 +65,13 @@ declare module "freja" {
         RELYING_PARTY_USER_ID,
         INTEGRATOR_SPECIFIC_USER_ID
     }
-    const enum UserAttributeCollections {
+    const enum FrejaUserAttributeCollections {
         ALL_EXTENDED,
         ALL_BASIC,
         COMMON_AUTH,
         COMMON_SIGN
     }
-    const enum RequestStatus {
+    const enum FrejaRequestStatus {
         STARTED,
         DELIVERED,
         CANCELLED,
@@ -97,7 +102,7 @@ declare module "freja" {
      * @property userInfo - <p>The user information</p>
      */
     type IUserInfo = {
-        userInfoType: UserInfoType;
+        userInfoType: FrejaUserInfoType;
         userInfo: string | ISocialSecurityNumber;
     };
     /**
@@ -105,7 +110,7 @@ declare module "freja" {
      * @property userInfo - <p>The email address</p>
      */
     type IEmailUserInfo = {
-        userInfoType: UserInfoType;
+        userInfoType: FrejaUserInfoType;
         userInfo: string;
     };
     /**
@@ -113,7 +118,7 @@ declare module "freja" {
      * @property userInfo - <p>The social security number</p>
      */
     type ISSNUserInfo = {
-        userInfoType: UserInfoType;
+        userInfoType: FrejaUserInfoType;
         userInfo: ISocialSecurityNumber;
     };
     /**
@@ -121,7 +126,7 @@ declare module "freja" {
      * @property userInfo - <p>Must be &quot;N/A&quot;</p>
      */
     type IInferredUserInfo = {
-        userInfoType: UserInfoType;
+        userInfoType: FrejaUserInfoType;
         userInfo: string;
     };
     /**
@@ -129,7 +134,7 @@ declare module "freja" {
      * @property userInfo - <p>The email address</p>
      */
     type IPhoneUserInfo = {
-        userInfoType: UserInfoType;
+        userInfoType: FrejaUserInfoType;
         userInfo: string;
     };
     /**
@@ -137,31 +142,58 @@ declare module "freja" {
      * @property userInfo - <p>The email address</p>
      */
     type IOrgIdUserInfo = {
-        userInfoType: UserInfoType;
+        userInfoType: FrejaUserInfoType;
         userInfo: string;
     };
     type IResultMessage = {
         isOk: boolean;
     };
+    /**
+     * @property identifier - <p>Title of the Organisation ID to be displayed to the end user</p>
+     * @property identifierName - <p>Display name of specific organisation identifier</p>
+     * @property title - <p>Value of specific organisation identifier</p>
+     * @property [ssn] - <p>User SSN in international format if exist</p>
+     * @property country - <p>User country</p>
+     * @property registrationState - <p>The extended error message</p>
+     */
+    type IFrejaOrgIdUserInfo = {
+        identifier: string;
+        identifierName: string;
+        title: string;
+        ssn?: string;
+        country: string;
+        registrationState: FrejaRegistrationState;
+    };
+    /**
+     * @property users - <p>The organisation information</p>
+     */
+    type IFrejaOrgIdUserList = {
+        isOk: boolean;
+        users: IFrejaOrgIdUserInfo[];
+    };
     type ISuccessResultMessage = {
         isOk: boolean;
         data: any;
     };
+    type IUpdateSuccessMessage = {
+        isOk: boolean;
+        added: number;
+        updated: number;
+        deleted: number;
+    };
     /**
      * @property isOk - <p>Must be false</p>
-     * @property data.code - <p>The error code</p>
-     * @property data.message - <p>The error message</p>
-     * @property data.extendedMessage - <p>The extended error message</p>
-     * @property data.trace - <p>The error trace</p>
+     * @property code - <p>The error code</p>
+     * @property message - <p>The error message</p>
+     * @property [extendedMessage] - <p>The extended error message</p>
+     * @property [trace] - <p>The error trace</p>
      */
     type IFailureResult = {
         isOk: boolean;
-        data: {
-            code: number;
-            message: string;
-            extendedMessage: string;
-            trace: string;
-        };
+        code: number;
+        message: string;
+        extendedMessage?: string;
+        trace?: string;
     };
     /**
      * @property isOk - <p>Must be true</p>
@@ -182,7 +214,7 @@ declare module "freja" {
      */
     type IRequestStatusMessage = {
         isOk: boolean;
-        status: RequestStatus;
+        status: FrejaRequestStatus;
         isFinal: boolean;
     };
     /**
@@ -193,7 +225,7 @@ declare module "freja" {
      */
     type ICompletedRequestMessage = {
         isOk: boolean;
-        status: RequestStatus;
+        status: FrejaRequestStatus;
         data: IFrejaResponse;
         isFinal: boolean;
     };
@@ -293,7 +325,7 @@ declare module "freja" {
      * @property [ssc] - <p>The user's social security country</p>
      * @property [photo] - <p>The user's photo</p>
      */
-    type IFrejaUserInfo = {
+    type IFrejaUserDetails = {
         firstname?: string;
         lastname?: string;
         fullname?: string;
@@ -356,7 +388,7 @@ declare module "freja" {
      * @property [advanced] - <p>The advanced signature</p>
      */
     type IFrejaSignatureData = {
-        type: SignatureType;
+        type: FrejaSignatureType;
         timestamp: Date;
         payload: string;
         transactionId: string;
@@ -368,14 +400,18 @@ declare module "freja" {
     };
     /**
      * <p>The main Freja API class.</p>
-     * @param mode - <p>The API mode.</p>
+     * @property UserAttributes - <p>The user attributes to return.</p>
+     * @property RegistrationLevel - <p>The minimum requested level.</p>
+     * @property APIEnvironment - <p>The API mode.</p>
+     * @property RelyingPartyId - <p>The relying party ID (used by integrators only).</p>
+     * @param apiEnvironment - <p>The API mode.</p>
      * @param authPfx - <p>The path to the PFX file.</p>
      * @param authPwd - <p>The password for the PFX file.</p>
-     * @param [jwtToken] - <p>The JWT token files ({'x5t': 'file'}).</p>
-     * @param [caCert] - <p>The path to the CA certificate file(s).</p>
+     * @param [trustedJWTCertificates] - <p>The JWT token files ({'x5t': 'file'}).</p>
+     * @param [trustedCACertificates] - <p>The path to the CA certificate file(s).</p>
      */
     class FrejaAPI {
-        constructor(mode: APIMode, authPfx: string, authPwd: string, jwtToken?: any, caCert?: undefined | string | string[]);
+        constructor(apiEnvironment: FrejaAPIEnvironment, authPfx: string, authPwd: string, trustedJWTCertificates?: any, trustedCACertificates?: undefined | string | string[]);
         /**
          * <p>Create a user info object.</p>
          * @param userData - <p>The user data to create the object from (email, phone, ssn, orgid etc.)</p>
@@ -415,12 +451,27 @@ declare module "freja" {
          */
         public AddOrgIdRequest(userInfo: string | any | IUserInfo, title: string, identifier: string, value: string, displayTypes?: FrejaIdentifierDisplayType[]): void;
         /**
+         * <p>Gets a full list of issued organisation ids</p>
+         */
+        public GetOrgIdUserList(): Promise<IFailureResult | IFrejaOrgIdUserList>;
+        /**
+         * <p>Updates a issued organisation id with additional attributes</p>
+         * @param identifier - <p>The custom identifier to delete</p>
+         * @param additionalAttributes - <p>Additional attributes to update</p>
+         */
+        public UpdateOrgId(identifier: string, additionalAttributes: IFrejaUserOrganisationAttributes[]): Promise<IFailureResult | IUpdateSuccessMessage>;
+        /**
+         * <p>Deletes a issued organisation id</p>
+         * @param identifier - <p>The custom identifier to delete</p>
+         */
+        public RevokeOrgId(identifier: string): Promise<IFailureResult | ISuccessResultMessage>;
+        /**
          * <p>Initialize an authentication or signature request.</p>
          * @param requestType - <p>The type of request.</p>
          * @param userInfo - <p>The user information used to initialize, leave empty for inferred.</p>
          * @param additionalParams - <p>Additional parameters for the request.</p>
          */
-        public InitRequest(requestType: RequestType, userInfo: string | undefined | any, ...additionalParams: any[]): Promise<IFailureResult | IInitializationSuccess>;
+        public InitRequest(requestType: FrejaRequestType, userInfo: string | undefined | any, ...additionalParams: any[]): Promise<IFailureResult | IInitializationSuccess>;
         /**
          * <p>Retrieve the status of a request.</p>
          * @param token - <p>The token of the request.</p>
@@ -453,6 +504,23 @@ declare module "freja" {
          * @returns <p>The error message</p>
          */
         public static GetError(errorCode: number): string;
+        /**
+         * <p>The user attributes to return.</p>
+        */
+        UserAttributes: FrejaUserAttributes[];
+        /**
+         * <p>The minimum requested level.</p>
+        */
+        RegistrationLevel: FrejaRegistrationLevel;
+        ConfirmationMethod: FrejaConfirmationMethod;
+        /**
+         * <p>The API mode.</p>
+        */
+        APIEnvironment: APIEnvironment;
+        /**
+         * <p>The relying party ID (used by integrators only).</p>
+        */
+        RelyingPartyId: string;
     }
 }
 
