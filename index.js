@@ -3,6 +3,10 @@ import { existsSync, readFileSync } from 'fs';
 import https from 'https';
 import pjson from './package.json' with { type: "json" };
 import jwt from 'jsonwebtoken';
+import { join } from 'path';
+import { dirname } from 'path';
+import { fileURLToPath } from 'url';
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 /**
  * @module freja
@@ -20,6 +24,20 @@ import jwt from 'jsonwebtoken';
 const FrejaAPIEnvironment = Object.freeze({
     PRODUCTION: 'PRODUCTION',
     TEST: 'TEST'
+});
+
+/**
+ * @readonly
+ * @enum {Object}
+ * @category Enums
+ * @property {string} EXTENDED "EXTENDED"
+ * @property {string} VETTING_CONFIRMED "VETTING_CONFIRMED"
+ * @property {string} PLUS "PLUS"
+ */
+const FrejaRegistrationState = Object.freeze({
+    EXTENDED: 'EXTENDED',
+    VETTING_CONFIRMED: 'VETTING_CONFIRMED',
+    PLUS: 'PLUS'
 });
 
 /**
@@ -326,11 +344,40 @@ const FrejaDocumentTypes = Object.freeze({
  */
 
 /**
+ * @typedef {Object} IFrejaOrgIdUserInfo
+ * @category Freja
+ * @property {string} identifier Title of the Organisation ID to be displayed to the end user
+ * @property {string} identifierName Display name of specific organisation identifier
+ * @property {string} title Value of specific organisation identifier
+ * @property {string} [ssn] User SSN in international format if exist
+ * @property {string} country User country
+ * @property {FrejaRegistrationState} registrationState The extended error message
+ */
+
+/**
+ * @typedef {Object} IFrejaOrgIdUserList
+ * @category Responses
+ * @extends IResultMessage
+ * @property {boolean} isOk
+ * @property {IFrejaOrgIdUserInfo[]} users The organisation information
+ */
+
+/**
  * @typedef {Object} ISuccessResultMessage
  * @category Responses
  * @extends IResultMessage
  * @property {boolean} isOk
  * @property {any} data
+ */
+
+/**
+ * @typedef {Object} IUpdateSuccessMessage
+ * @category Responses
+ * @extends IResultMessage
+ * @property {boolean} isOk
+ * @property {number} added
+ * @property {number} updated
+ * @property {number} deleted
  */
 
 /**
@@ -813,6 +860,101 @@ class FrejaAPI {
             identifierDisplayTypes: displayTypes,
         }});
     }
+
+    /**
+     * Gets a full list of issued organisation ids
+     * @method module:freja.FrejaAPI#GetOrgIdUserList
+     * @public
+     * @async
+     * @returns {Promise<IFailureResult | IFrejaOrgIdUserList>}
+     */ 
+    async GetOrgIdUserList() {
+        var requestUri = '/organisation/management/orgId/1.0/users/getAll';
+        
+        const result = await this._apiRequest(requestUri, 'getAllOrganisationIdRequest', undefined);
+
+        if (result.code) {
+            return this._createErrorObject(result.code, result.message);
+        } else {
+
+            var users = [];
+            for (const user of result.json.userInfos) {
+                var userObject = {
+                    identifier: user.organisationId.identifier,
+                    identifierName: user.organisationId.identifierName,
+                    title: user.organisationId.title,
+                    registrationState: user.registrationState,
+                    country: user.ssn.country,
+                };
+                if (user.ssn.ssn) {
+                    userObject.ssn = user.ssn.country+user.ssn.ssn;
+                }
+                users.push(userObject);
+            }
+
+            return this._createSuccessObject({ isFinal: true, users });
+        }         
+    }
+
+    /**
+     * Updates a issued organisation id with additional attributes
+     * @method module:freja.FrejaAPI#UpdateOrgId
+     * @public
+     * @async
+     * @param {string} identifier The custom identifier to delete
+     * @param {IFrejaUserOrganisationAttributes[]} additionalAttributes Additional attributes to update
+     * @returns {Promise<IFailureResult | IUpdateSuccessMessage>}
+     */  
+    async UpdateOrgId(identifier, additionalAttributes) {
+
+        if (!identifier)
+            return this._createErrorObject(9012);
+
+        if (!additionalAttributes || !Array.isArray(additionalAttributes) || additionalAttributes.length === 0)
+            return this._createErrorObject(9018);
+
+        var requestUri = '/organisation/management/orgId/1.0/update';
+        var requestName = 'updateOrganisationIdRequest';        
+        var requestData = { identifier, additionalAttributes };
+
+        const result = await this._apiRequest(requestUri, requestName, requestData)
+        
+        if (result.code) {
+            return this._createErrorObject(result.code, result.message);
+        } else {
+            return this._createSuccessObject({
+                updated: result.json.updateStatus.updated,
+                added: result.json.updateStatus.added,
+                deleted: result.json.updateStatus.deleted,
+                isFinal: true
+            });
+        }        
+    }
+
+    /**
+     * Deletes a issued organisation id
+     * @method module:freja.FrejaAPI#RevokeOrgId
+     * @public
+     * @async
+     * @param {string} identifier The custom identifier to delete
+     * @returns {Promise<IFailureResult | ISuccessResultMessage>}
+     */       
+    async RevokeOrgId(identifier) {
+        if (!identifier)
+            return this._createErrorObject(9012);        
+
+        var requestUri = '/organisation/management/orgId/1.0/delete';
+        var requestName = 'deleteOrganisationIdRequest';
+        var requestData = { identifier };
+
+        const result = await this._apiRequest(requestUri, requestName, requestData)
+        
+        if (result.code) {
+            return this._createErrorObject(result.code, result.message);
+        } else {
+            return this._createSuccessObject({data: {deleted: true}, isFinal: true});
+        }
+    } 
 
     /**
      * Initialize an authentication or signature request.
@@ -1516,6 +1658,7 @@ class FrejaAPI {
         3008: 'Invalid SSN for advanced signing. Advanced signing cannot be performed by users from your country.',
         3009: 'Invalid advanced signing request. Missing SSN and basicUserInfo in its attributesToReturn parameter.',
         4000: 'Invalid or missing Organisation ID identifier.',
+        4001: 'There is no user for given Organisation ID identifier.',
         4002: 'This Organisation ID identifier is already used.',
         4003: 'Invalid expiry.',
         4004: 'Invalid or missing Organisation ID title.',
