@@ -17,7 +17,7 @@ import jwt from 'jsonwebtoken';
  * @property {string} PRODUCTION "PRODUCTION"
  * @property {string} TEST "TEST"
  */
-const APIMode = Object.freeze({
+const FrejaAPIEnvironment = Object.freeze({
     PRODUCTION: 'PRODUCTION',
     TEST: 'TEST'
 });
@@ -38,14 +38,14 @@ const FrejaIdentifierDisplayType = Object.freeze({
  * @readonly
  * @enum {Object}
  * @category UserInfo
- * @name UserInfo
+ * @name UserInfoType
  * @property {string} INFERRED "INFERRED"
  * @property {string} EMAIL "EMAIL"
  * @property {string} PHONE "PHONE"
  * @property {string} SSN "SSN"
  * @property {string} ORGID "ORG_ID"
  */
-const UserInfoType = Object.freeze({
+const FrejaUserInfoType = Object.freeze({
     INFERRED: 'INFERRED',
     EMAIL: 'EMAIL',
     PHONE: 'PHONE',
@@ -63,7 +63,7 @@ const UserInfoType = Object.freeze({
  * @property {string} ORGID_SIGN "I"
  * @property {string} ORGID_MGMT "M"
  */
-const RequestType = Object.freeze({
+const FrejaRequestType = Object.freeze({
     AUTH: 'A',
     SIGN: 'S',
     ORGID_AUTH: 'O',
@@ -79,7 +79,7 @@ const RequestType = Object.freeze({
  * @property {string} EXTENDED "EXTENDED"
  * @property {string} XML_MINAMEDDELANDEN "XML_MINAMEDDELANDEN" 
  */
-const SignatureType = Object.freeze({
+const FrejaSignatureType = Object.freeze({
     SIMPLE: 'SIMPLE',
     EXTENDED: 'EXTENDED',
     XML_MINAMEDDELANDEN: 'XML_MINAMEDDELANDEN'
@@ -93,7 +93,7 @@ const SignatureType = Object.freeze({
  * @property {string} EXTENDED "EXTENDED"
  * @property {string} PLUS "PLUS"
  */
-const RegistrationLevel = Object.freeze({
+const FrejaRegistrationLevel = Object.freeze({
     BASIC: 'BASIC',
     EXTENDED: 'EXTENDED',
     PLUS: 'PLUS'
@@ -106,7 +106,7 @@ const RegistrationLevel = Object.freeze({
  * @property {string} DEFAULT "DEFAULT"
  * @property {string} DEFAULT_AND_FACE "DEFAULT_AND_FACE"
  */
-const ConfirmationMethod = Object.freeze({
+const FrejaConfirmationMethod = Object.freeze({
     DEFAULT: 'DEFAULT',
     DEFAULT_AND_FACE: 'DEFAULT_AND_FACE'
 });
@@ -151,7 +151,7 @@ const FrejaUserAddressSource = Object.freeze({
  * @property {string} RELYING_PARTY_USER_ID The relying party user ID
  * @property {string} INTEGRATOR_SPECIFIC_USER_ID The integrator specific user ID
  */
-const UserAttributes = Object.freeze({
+const FrejaUserAttributes = Object.freeze({
     BASIC_USER_INFO: 'BASIC_USER_INFO',
     EMAIL_ADDRESS: 'EMAIL_ADDRESS',
     ALL_EMAIL_ADDRESSES: 'ALL_EMAIL_ADDRESSES',
@@ -177,38 +177,38 @@ const UserAttributes = Object.freeze({
  * @property {UserAttributes[]} COMMON_AUTH Attributes commonly used for authentication (Requires EXTENDED or PLUS registration level)
  * @property {UserAttributes[]} COMMON_SIGN Attributes commonly used for signing (Requires EXTENDED or PLUS registration level)
  */
-const UserAttributeCollections = Object.freeze({
+const FrejaUserAttributeCollections = Object.freeze({
     ALL_EXTENDED: [
-        UserAttributes.BASIC_USER_INFO,
-        UserAttributes.EMAIL_ADDRESS,
-        UserAttributes.ALL_EMAIL_ADDRESSES,
-        UserAttributes.ALL_PHONE_NUMBERS,
-        UserAttributes.DATE_OF_BIRTH,
-        UserAttributes.AGE,
-        UserAttributes.PHOTO,
-        UserAttributes.ADDRESSES,
-        UserAttributes.SSN,
-        UserAttributes.DOCUMENT,
-        UserAttributes.REGISTRATION_LEVEL,
-        UserAttributes.RELYING_PARTY_USER_ID,
-        UserAttributes.INTEGRATOR_SPECIFIC_USER_ID ],
+        FrejaUserAttributes.BASIC_USER_INFO,
+        FrejaUserAttributes.EMAIL_ADDRESS,
+        FrejaUserAttributes.ALL_EMAIL_ADDRESSES,
+        FrejaUserAttributes.ALL_PHONE_NUMBERS,
+        FrejaUserAttributes.DATE_OF_BIRTH,
+        FrejaUserAttributes.AGE,
+        FrejaUserAttributes.PHOTO,
+        FrejaUserAttributes.ADDRESSES,
+        FrejaUserAttributes.SSN,
+        FrejaUserAttributes.DOCUMENT,
+        FrejaUserAttributes.REGISTRATION_LEVEL,
+        FrejaUserAttributes.RELYING_PARTY_USER_ID,
+        FrejaUserAttributes.INTEGRATOR_SPECIFIC_USER_ID ],
     ALL_BASIC: [
-        UserAttributes.EMAIL_ADDRESS,
-        UserAttributes.ALL_EMAIL_ADDRESSES,
-        UserAttributes.ALL_PHONE_NUMBERS,
-        UserAttributes.PHOTO,
-        UserAttributes.REGISTRATION_LEVEL,
-        UserAttributes.RELYING_PARTY_USER_ID,
-        UserAttributes.INTEGRATOR_SPECIFIC_USER_ID ],    
+        FrejaUserAttributes.EMAIL_ADDRESS,
+        FrejaUserAttributes.ALL_EMAIL_ADDRESSES,
+        FrejaUserAttributes.ALL_PHONE_NUMBERS,
+        FrejaUserAttributes.PHOTO,
+        FrejaUserAttributes.REGISTRATION_LEVEL,
+        FrejaUserAttributes.RELYING_PARTY_USER_ID,
+        FrejaUserAttributes.INTEGRATOR_SPECIFIC_USER_ID ],    
     COMMON_AUTH: [
-        UserAttributes.BASIC_USER_INFO,
-        UserAttributes.EMAIL_ADDRESS,
-        UserAttributes.SSN ],
+        FrejaUserAttributes.BASIC_USER_INFO,
+        FrejaUserAttributes.EMAIL_ADDRESS,
+        FrejaUserAttributes.SSN ],
     COMMON_SIGN: [
-        UserAttributes.BASIC_USER_INFO,
-        UserAttributes.EMAIL_ADDRESS,
-        UserAttributes.ADDRESSES,
-        UserAttributes.SSN ],
+        FrejaUserAttributes.BASIC_USER_INFO,
+        FrejaUserAttributes.EMAIL_ADDRESS,
+        FrejaUserAttributes.ADDRESSES,
+        FrejaUserAttributes.SSN ],
 });
 
 
@@ -225,7 +225,7 @@ const UserAttributeCollections = Object.freeze({
  * @property {string} RP_REJECTED "RP_REJECTED"
  * @property {string} APPROVED "APPROVED"
  */
-const RequestStatus = Object.freeze({
+const FrejaRequestStatus = Object.freeze({
     STARTED: 'STARTED',
     DELIVERED: 'DELIVERED_TO_MOBILE',
     CANCELLED: 'CANCELED',
@@ -275,7 +275,7 @@ const FrejaDocumentTypes = Object.freeze({
 /**
  * @typedef {Object} IUserInfo
  * @category UserInfo
- * @property {UserInfoType} userInfoType The type of user information
+ * @property {FrejaUserInfoType} userInfoType The type of user information
  * @property {string | ISocialSecurityNumber} userInfo The user information
  */
 
@@ -283,7 +283,7 @@ const FrejaDocumentTypes = Object.freeze({
   * @typedef {Object} IEmailUserInfo
   * @extends IUserInfo
   * @category UserInfo
-  * @property {UserInfoType} userInfoType Must be "EMAIL"
+  * @property {FrejaUserInfoType} userInfoType Must be "EMAIL"
   * @property {string} userInfo The email address
   */
 
@@ -291,7 +291,7 @@ const FrejaDocumentTypes = Object.freeze({
   * @typedef {Object} ISSNUserInfo
   * @extends IUserInfo
   * @category UserInfo
-  * @property {UserInfoType} userInfoType Must be "EMAIL"
+  * @property {FrejaUserInfoType} userInfoType Must be "EMAIL"
   * @property {ISocialSecurityNumber} userInfo The social security number
   */
 
@@ -299,7 +299,7 @@ const FrejaDocumentTypes = Object.freeze({
   * @typedef {Object} IInferredUserInfo
   * @extends IUserInfo
   * @category UserInfo
-  * @property {UserInfoType} userInfoType Must be "INFERRRED"
+  * @property {FrejaUserInfoType} userInfoType Must be "INFERRRED"
   * @property {string} userInfo Must be "N/A"
   */
 
@@ -307,7 +307,7 @@ const FrejaDocumentTypes = Object.freeze({
   * @typedef {Object} IPhoneUserInfo
   * @extends IUserInfo
   * @category UserInfo
-  * @property {UserInfoType} userInfoType Must be "PHONE"
+  * @property {FrejaUserInfoType} userInfoType Must be "PHONE"
   * @property {string} userInfo The email address
   */
 
@@ -315,7 +315,7 @@ const FrejaDocumentTypes = Object.freeze({
   * @typedef {Object} IOrgIdUserInfo
   * @extends IUserInfo
   * @category UserInfo
-  * @property {UserInfoType} userInfoType Must be "ORGID"
+  * @property {FrejaUserInfoType} userInfoType Must be "ORGID"
   * @property {string} userInfo The email address
   */
 
@@ -360,7 +360,7 @@ const FrejaDocumentTypes = Object.freeze({
  * @category Responses
  * @extends IResultMessage
  * @property {boolean} isOk Must be true
- * @property {RequestStatus} status The transaction status
+ * @property {FrejaRequestStatus} status The transaction status
  * @property {boolean} isFinal If the transaction is completed or should be checked again 
  */
 
@@ -369,7 +369,7 @@ const FrejaDocumentTypes = Object.freeze({
  * @category Responses
  * @extends IRequestStatusMessage
  * @property {boolean} isOk Must be true
- * @property {RequestStatus} status The transaction status
+ * @property {FrejaRequestStatus} status The transaction status
  * @property {IFrejaResponse} data The results of the request
  * @property {boolean} isFinal Always true
  */
@@ -439,7 +439,7 @@ const FrejaDocumentTypes = Object.freeze({
  */
 
 /**
- * @typedef {Object} IFrejaUserInfo
+ * @typedef {Object} IFrejaUserDetails
  * @category Freja
  * @property {string} [firstname=undefined] The user's first name
  * @property {string} [lastname=undefined] The user's last name
@@ -456,7 +456,7 @@ const FrejaDocumentTypes = Object.freeze({
  * @category Freja
  * @property {IUserInfo} freja.userInfo The user information object
  * @property {string} [freja.relyingPartyUserId=undefined] The relying party user ID
- * @property {RegistrationLevel} [freja.registrationLevel=undefined] The registration level
+ * @property {FrejaRegistrationLevel} [freja.registrationLevel=undefined] The registration level
  * @property {string} [freja.customIdentifier=undefined] The custom identifier
  */
 
@@ -486,7 +486,7 @@ const FrejaDocumentTypes = Object.freeze({
 /**
  * @typedef {Object} IFrejaSignatureData
  * @category Freja
- * @property {SignatureType} type The signature type
+ * @property {FrejaSignatureType} type The signature type
  * @property {Date} timestamp The date of the signature
  * @property {String} payload The signed data
  * @property {String} transactionId The id of the signing transaction from Freja
@@ -509,15 +509,15 @@ const FrejaDocumentTypes = Object.freeze({
  * The main Freja API class.
  * @class module:freja.FrejaAPI
  * @alias FrejaAPI
- * @param {APIMode} mode The API mode.
+ * @param {FrejaAPIEnvironment} apiEnvironment The API mode.
  * @param {string} authPfx The path to the PFX file.
  * @param {string} authPwd The password for the PFX file.
- * @param {Object} [jwtToken=undefined] The JWT token files ({'x5t': 'file'}).
- * @param {undefined|string|string[]} [caCert=undefined] The path to the CA certificate file(s).
- * @property {UserAttributes[]} UserAttributes The user attributes to return.
- * @property {RegistrationLevel} RegistrationLevel The minimum requested level.
- * @property {ConfirmationMethod} ConfirmationMethod
- * @property {APIMode} APIMode The API mode.
+ * @param {Object} [trustedJWTCertificates=undefined] The JWT token files ({'x5t': 'file'}).
+ * @param {undefined|string|string[]} [trustedCACertificates=undefined] The path to the CA certificate file(s).
+ * @property {FrejaUserAttributes[]} UserAttributes The user attributes to return.
+ * @property {FrejaRegistrationLevel} RegistrationLevel The minimum requested level.
+ * @property {FrejaConfirmationMethod} ConfirmationMethod
+ * @property {APIEnvironment} APIEnvironment The API mode.
  * @property {string} RelyingPartyId The relying party ID (used by integrators only).
  * @throws {Error} If the mode is invalid or if the password is missing.
  * @throws {Error} If the PFX or CA certificate file does not exist. * @example
@@ -534,35 +534,36 @@ class FrejaAPI {
     #authPfx = undefined;
     /** @type undefined|string */
     #authPwd = undefined;
-    #jwtToken = {};
+    /** @type Object */
+    #trustedJTWCertificateList = {};
     /** @type Array<string> */
-    #caCert = [];
+    #trustedCACertificateList = [];
 
     //Public properties
     /**
-     * @memberof module:freja.FrejaAPI
-     * @type RegistrationLevel
+     * @memberof module:freja.FrejaAPI 
+     * @type FrejaRegistrationLevel
      */
-    #registrationLevel = RegistrationLevel.BASIC;
+    #registrationLevel = FrejaRegistrationLevel.BASIC;
     get RegistrationLevel() { return this.#registrationLevel; }
     set RegistrationLevel(value) { this.#registrationLevel = value; }
 
     /**
      * @memberof module:freja.FrejaAPI
-     * @type ConfirmationMethod
+     * @type FrejaConfirmationMethod
      */
-    #confirmationMethod = ConfirmationMethod.DEFAULT;
+    #confirmationMethod = FrejaConfirmationMethod.DEFAULT;
     get ConfirmationMethod() { return this.#confirmationMethod; }
     set ConfirmationMethod(value) { this.#confirmationMethod = value; }
 
 
     /**
      * @memberof module:freja.FrejaAPI
-     * @type APIMode
+     * @type FrejaAPIEnvironment
      */
-    #apiMode = APIMode.TEST;
-    get APIMode() { return this.#apiMode; }
-    set APIMode(value) { this.#apiMode = value; }    
+    #apiEnvironment = FrejaAPIEnvironment.TEST;
+    get APIEnvironment() { return this.#apiEnvironment; }
+    set APIEnvironment(value) { this.#apiEnvironment = value; }    
 
     /**
      * @memberof module:freja.FrejaAPI
@@ -583,12 +584,12 @@ class FrejaAPI {
     /**
      * @constructs
      */
-    constructor(mode, authPfx, authPwd, jwtToken=undefined, caCert=undefined) {
-        if (!mode || (mode !== APIMode.PRODUCTION && mode !== APIMode.TEST)) {
+    constructor(apiEnvironment, authPfx, authPwd, trustedJWTCertificates=undefined, trustedCACertificates=undefined) {
+        if (!apiEnvironment || (apiEnvironment !== FrejaAPIEnvironment.PRODUCTION && apiEnvironment !== FrejaAPIEnvironment.TEST)) {
             throw new Error("Invalid mode. Please use APIMode.PRODUCTION or APIMode.TEST.");
         }
 
-        if (!authPwd || !mode) {
+        if (!authPwd || !apiEnvironment) {
             throw new Error("All parameters are required.");
         }
 
@@ -596,58 +597,60 @@ class FrejaAPI {
             throw new Error("You must provide a valid PFX for authentication.");
         }
 
-        if (jwtToken) {
-            if (typeof jwtToken !=='object')
+        if (trustedJWTCertificates) {
+            if (typeof trustedJWTCertificates !=='object')
                         throw new Error("You must provide a valid JWT-tokens file for authentication.");  
 
-            var keyNames = Object.keys(jwtToken);
+            var keyNames = Object.keys(trustedJWTCertificates);
             for (const key of keyNames) {
-                if (!existsSync(jwtToken[key])) {
+                if (!existsSync(trustedJWTCertificates[key])) {
                     throw new Error("You must provide a valid JWT-tokens file for authentication.");
                 }
-                this.#jwtToken[key] = readFileSync(jwtToken[key], { encoding: 'ascii'}).replace(/\r\n/g, "\n");
+                this.#trustedJTWCertificateList[key] = readFileSync(trustedJWTCertificates[key], { encoding: 'ascii'}).replace(/\r\n/g, "\n");
             }
         } else {
-            if (mode === APIMode.PRODUCTION) {
-                this.#jwtToken['wSYLdhe93ToPR2X1UrNXxOg1juI'] = readFileSync('certs/prod_wSYLdhe93ToPR2X1UrNXxOg1juI.jwt', { encoding: 'ascii'}).replace(/\r\n/g, "\n");
+            if (apiEnvironment === FrejaAPIEnvironment.PRODUCTION) {
+                this.#trustedJTWCertificateList['wSYLdhe93ToPR2X1UrNXxOg1juI'] = readFileSync(join(__dirname,'certs/prod_wSYLdhe93ToPR2X1UrNXxOg1juI.jwt'), { encoding: 'ascii'}).replace(/\r\n/g, "\n");
             } else {
-                this.#jwtToken['DiZbzBfysUm6-IwI-GtienEsbjc'] = readFileSync('certs/test_DiZbzBfysUm6-IwI-GtienEsbjc.jwt', { encoding: 'ascii'}).replace(/\r\n/g, "\n");
+                this.#trustedJTWCertificateList['DiZbzBfysUm6-IwI-GtienEsbjc'] = readFileSync(join(__dirname,'certs/test_DiZbzBfysUm6-IwI-GtienEsbjc.jwt'), { encoding: 'ascii'}).replace(/\r\n/g, "\n");
             }
         }
 
-        if (caCert) {
-            if (Array.isArray(caCert)) {
+        if (trustedCACertificates) {
+            if (Array.isArray(trustedCACertificates)) {
                 //@ts-ignore We are actually checking already if we are an array so just visual studio validation error
-                for (const cert of caCert) {
+                for (const cert of trustedCACertificates) {
                     if (!existsSync(cert)) {
                         throw new Error("You must provide a valid CA certificate for authentication.");
                     }
                 }
-            } else if (!existsSync(caCert)) {
+            } else if (!existsSync(trustedCACertificates)) {
                 throw new Error("You must provide a valid CA certificate for authentication.");
             }
         }        
 
-        if (!caCert)
-            if (mode === APIMode.PRODUCTION)
+        if (!trustedCACertificates)
+            if (apiEnvironment === FrejaAPIEnvironment.PRODUCTION)
                 //@ts-ignore we are asigning it an array so never mind (it is an empty array in initialization)
-                caCert = [`certs/prod_root.pem`];
+                trustedCACertificates = [join(__dirname,'certs/prod_root.pem')];
             else
                 //@ts-ignore we are asigning it an array so never mind (it is an empty array in initialization)
-                caCert = [`certs/test_root.pem`];
+                trustedCACertificates = [join(__dirname,'certs/test_root.pem')];
 
-        this.#apiMode = mode;
-        this.#apiBase = mode === APIMode.PRODUCTION ? "prod.frejaeid.com" : "test.frejaeid.com";
+        this.#apiEnvironment = apiEnvironment;
+        this.#apiBase = apiEnvironment === FrejaAPIEnvironment.PRODUCTION ? "prod.frejaeid.com" : "test.frejaeid.com";
         this.#authPfx = readFileSync(authPfx);
         this.#authPwd = authPwd;
         
         // @ts-ignore caCert is now an array of strings regardless of input
-        caCert.forEach((certFile) => {
+        trustedCACertificates.forEach((certFile) => {
             var content = readFileSync(certFile, { encoding: 'ascii'}).replace(/\r\n/g, "\n");
+            //var matches = content.match(/(?<=-----BEGIN CERTIFICATE-----)[\s\S]*?(?=-----END CERTIFICATE-----)/g)
             var matches = content.match(/-----BEGIN CERTIFICATE-----\n[\s\S]+?\n-----END CERTIFICATE-----/g)
             
             // @ts-ignore #caCert is an array, ts-ignore is needed to avoid error
-            if (matches) matches.forEach((cert) => this.#caCert.push(cert));
+            //if (matches) matches.forEach((certContent) => this.#caCert.push(certContent.replace(/\n/g, "")));
+            if (matches) matches.forEach((cert) => this.#trustedCACertificateList.push(cert));
         });
 
         return;
@@ -669,7 +672,7 @@ class FrejaAPI {
         // No data supplied, we are going inferred
         if (!userData) {
             return {
-                userInfoType: UserInfoType.INFERRED,
+                userInfoType: FrejaUserInfoType.INFERRED,
                 userInfo: "N/A"
             };
         }
@@ -678,13 +681,13 @@ class FrejaAPI {
         if (typeof userData === "object") {
             if (userData.ssn && userData.country) {
                 return {
-                    userInfoType: UserInfoType.SSN,
+                    userInfoType: FrejaUserInfoType.SSN,
                     userInfo: Buffer.from(JSON.stringify({ country: userData.country, ssn: userData.ssn })).toString('base64')
                 };
             }
             if (userData.orgid) {
                 return {
-                    userInfoType: UserInfoType.ORGID,
+                    userInfoType: FrejaUserInfoType.ORGID,
                     userInfo: userData.orgid
                 };
             }
@@ -695,13 +698,12 @@ class FrejaAPI {
         if (typeof userData === "string") {
             if (emailRegexp.test(userData)) {
                 return {
-                    userInfoType: UserInfoType.EMAIL,
+                    userInfoType: FrejaUserInfoType.EMAIL,
                     userInfo: userData
                 };
             }
             if (phoneRegexp.test(userData)) {
                 return {
-                    userInfoType: UserInfoType.PHONE,
                     userInfo: userData
                 };
             }
@@ -711,7 +713,7 @@ class FrejaAPI {
                 if (country="SE") ssn=ssn.replace(/-/g, '');
 
                 return {
-                    userInfoType: UserInfoType.SSN,
+                    userInfoType: FrejaUserInfoType.SSN,
                     userInfo: Buffer.from(JSON.stringify({ country, ssn })).toString('base64')
                 };
             }            
@@ -731,7 +733,7 @@ class FrejaAPI {
      * @return {Promise<IFailureResult | IInitializationSuccess>}
      */
     async AuthRequest(userInfo,orgId=false) {
-        return this.InitRequest(orgId?RequestType.ORGID_AUTH:RequestType.AUTH, this.UserInfoFactory(userInfo));
+        return this.InitRequest(orgId?FrejaRequestType.ORGID_AUTH:FrejaRequestType.AUTH, this.UserInfoFactory(userInfo));
     }
 
     /**
@@ -753,10 +755,10 @@ class FrejaAPI {
             title,
             message: text,
         }
-        return this.InitRequest(orgId?RequestType.ORGID_SIGN:RequestType.SIGN, this.UserInfoFactory(userInfo), {
+        return this.InitRequest(orgId?FrejaRequestType.ORGID_SIGN:FrejaRequestType.SIGN, this.UserInfoFactory(userInfo), {
             text,
             notification,
-            signatureType: SignatureType.SIMPLE
+            signatureType: FrejaSignatureType.SIMPLE
         });
     }
 
@@ -780,11 +782,11 @@ class FrejaAPI {
             title,
             message: text,
         }
-        return this.InitRequest(orgId?RequestType.ORGID_SIGN:RequestType.SIGN, this.UserInfoFactory(userInfo), {
+        return this.InitRequest(orgId?FrejaRequestType.ORGID_SIGN:FrejaRequestType.SIGN, this.UserInfoFactory(userInfo), {
             text,
             notification,
             binaryData: Buffer.from(data).toString('base64'),
-            signatureType: SignatureType.XML_MINAMEDDELANDEN
+            signatureType: FrejaSignatureType.XML_MINAMEDDELANDEN
         });
     }
     
@@ -804,7 +806,7 @@ class FrejaAPI {
         if (!userInfo || !title || !identifier || !value || !displayTypes)
             return this._createErrorObject(9012);
 
-        return this.InitRequest(RequestType.ORGID_ADD, this.UserInfoFactory(userInfo), { orgId: {
+        return this.InitRequest(FrejaRequestType.ORGID_ADD, this.UserInfoFactory(userInfo), { orgId: {
             title,
             identifierName: identifier,
             identifier: value,
@@ -817,7 +819,7 @@ class FrejaAPI {
      * @method module:freja.FrejaAPI#InitRequest
      * @public
      * @async
-     * @param {RequestType} requestType The type of request.
+     * @param {FrejaRequestType} requestType The type of request.
      * @param {string|undefined|object} userInfo The user information used to initialize, leave empty for inferred.
      * @param  {...any} additionalParams Additional parameters for the request.
      * @returns {Promise<IFailureResult | IInitializationSuccess>}
@@ -834,20 +836,20 @@ class FrejaAPI {
         if (this.#userAttributes.length > 0)
             requestData.attributesToReturn = this._convertToAttributeBag(this.#userAttributes)
 
-        if (this.#confirmationMethod !== ConfirmationMethod.DEFAULT)
+        if (this.#confirmationMethod !== FrejaConfirmationMethod.DEFAULT)
             requestData.userConfirmationMethod = this.#confirmationMethod
 
-        if (this.#registrationLevel !== RegistrationLevel.BASIC)
+        if (this.#registrationLevel !== FrejaRegistrationLevel.BASIC)
             requestData.minRegistrationLevel = this.#registrationLevel;
 
 
         let requestUri;
         let requestName;
-        if (requestType === RequestType.AUTH || requestType === RequestType.ORGID_AUTH) {
+        if (requestType === FrejaRequestType.AUTH || requestType === FrejaRequestType.ORGID_AUTH) {
 
             requestName = 'initAuthRequest';
 
-            if (requestType === RequestType.ORGID_AUTH) {
+            if (requestType === FrejaRequestType.ORGID_AUTH) {
                 requestUri = '/organisation/authentication/1.0/init';
     
                 const orgIdIssuer = this._findParam(additionalParams, 'issuer');
@@ -857,7 +859,7 @@ class FrejaAPI {
                 requestUri = '/authentication/1.0/initAuthentication';
             }
 
-        } else if (requestType === RequestType.SIGN || requestType === RequestType.ORGID_SIGN) {
+        } else if (requestType === FrejaRequestType.SIGN || requestType === FrejaRequestType.ORGID_SIGN) {
 
             requestUri = '/sign/1.0/initSignature';
             requestName = 'initSignRequest';
@@ -876,7 +878,7 @@ class FrejaAPI {
 
             // Check for binary/Singing bits
             const binaryData = this._findParam(additionalParams, 'binaryData');
-            if (signatureType === SignatureType.SIMPLE && binaryData)
+            if (signatureType === FrejaSignatureType.SIMPLE && binaryData)
                 return this._createErrorObject(9003);
 
             requestData.signatureType = signatureType;
@@ -898,7 +900,7 @@ class FrejaAPI {
                     text: notification.message
                 };
             }
-        } else if (requestType === RequestType.ORGID_ADD) {
+        } else if (requestType === FrejaRequestType.ORGID_ADD) {
             requestUri = '/organisation/management/orgId/1.0/initAdd';
             requestName = 'initAddOrganisationIdRequest';
 
@@ -1132,16 +1134,16 @@ class FrejaAPI {
         } else {
 
             switch (result.json.status) {
-                case RequestStatus.STARTED:
-                case RequestStatus.DELIVERED:
+                case FrejaRequestStatus.STARTED:
+                case FrejaRequestStatus.DELIVERED:
                     return this._createSuccessObject({ status: result.json.status, isFinal: false});
-                case RequestStatus.REJECTED:
-                case RequestStatus.EXPIRED:
-                case RequestStatus.RP_CANCELLED:
-                case RequestStatus.RP_REJECTED:
-                case RequestStatus.CANCELLED:
+                case FrejaRequestStatus.REJECTED:
+                case FrejaRequestStatus.EXPIRED:
+                case FrejaRequestStatus.RP_CANCELLED:
+                case FrejaRequestStatus.RP_REJECTED:
+                case FrejaRequestStatus.CANCELLED:
                         return this._createSuccessObject({ status: result.json.status, isFinal: true});
-                case RequestStatus.APPROVED:
+                case FrejaRequestStatus.APPROVED:
                     var convertedResult = this._processSuccessResponse(result.json);
                     if (convertedResult)
                         return this._createSuccessObject({ status: result.json.status, data: convertedResult, isFinal: true });
@@ -1158,7 +1160,7 @@ class FrejaAPI {
      * Convert an array of UserAttributes to an array of AttributeBag for use with API
      * @method module:freja.FrejaAPI#_convertToAttributeBag
      * @private
-     * @param {Array<UserAttributes>} attributeList The list of attributes to convert
+     * @param {Array<FrejaUserAttributes>} attributeList The list of attributes to convert
      * @returns {Array<Object>} The converted list
      */
     _convertToAttributeBag(attributeList) {
@@ -1192,14 +1194,14 @@ class FrejaAPI {
     _processSuccessResponse(apiResponse) {
         try {
             const jwtInfo = jwt.decode(apiResponse.details, { complete: true });
-            if (!jwtInfo || !jwtInfo.header || !jwtInfo.header.x5t || !this.#jwtToken[jwtInfo.header.x5t])
+            if (!jwtInfo || !jwtInfo.header || !jwtInfo.header.x5t || !this.#trustedJTWCertificateList[jwtInfo.header.x5t])
                 return undefined;
 
             /**
              * @private
              * @type {FrejaJwtPayload}
              */
-            const decoded = jwt.verify(apiResponse.details, this.#jwtToken[jwtInfo.header.x5t]);
+            const decoded = jwt.verify(apiResponse.details, this.#trustedJTWCertificateList[jwtInfo.header.x5t]);
             const today = new Date();
 
             var result = { info: {}, contact: {}, freja: { userInfo: decoded.userInfo } };
@@ -1409,7 +1411,7 @@ class FrejaAPI {
                 agent: new https.Agent({
                     pfx: this.#authPfx,
                     passphrase: this.#authPwd,
-                    ca: this.#caCert,
+                    ca: this.#trustedCACertificateList,
                     // @ts-ignore This is actually undocumented but needed for the agent to work!!
                     ssl: { rejectUnauthorized: true },
                 }),
@@ -1551,4 +1553,4 @@ class FrejaAPI {
 };
 
 export default FrejaAPI;
-export { FrejaAPI, APIMode, RequestType, UserInfoType, SignatureType, FrejaIdentifierDisplayType, ConfirmationMethod, RegistrationLevel, UserAttributes };
+export { FrejaAPI, FrejaAPIEnvironment, FrejaIdentifierDisplayType, FrejaUserInfoType, FrejaRequestType, FrejaSignatureType, FrejaRegistrationLevel, FrejaConfirmationMethod, FrejaUserAddressType, FrejaUserAddressSource, FrejaUserAttributes, FrejaUserAttributeCollections, FrejaRequestStatus, FrejaDocumentTypes };
