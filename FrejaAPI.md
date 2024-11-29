@@ -3,7 +3,7 @@
 ## freja
 The Freja module will allow you to interact with the Freja eID API. The module is designed to be used in a Node.js environment and will allow you to create authentication and signing requests, as well as manage user information.
 
-**Version**: 1.0.3  
+**Version**: 1.1.0  
 
 * [freja](#module_freja)
     * _static_
