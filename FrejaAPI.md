@@ -37,6 +37,7 @@ The Freja module will allow you to interact with the Freja eID API. The module i
             * [~FrejaConfirmationMethod](#module_freja..FrejaConfirmationMethod) : <code>enum</code>
             * [~FrejaUserAttributes](#module_freja..FrejaUserAttributes) : <code>enum</code>
             * [~FrejaUserAttributeCollections](#module_freja..FrejaUserAttributeCollections) : <code>enum</code>
+            * [~FrejaLOALevel](#module_freja..FrejaLOALevel) : <code>enum</code>
             * [~FrejaRequestStatus](#module_freja..FrejaRequestStatus) : <code>enum</code>
             * [~FrejaDocumentTypes](#module_freja..FrejaDocumentTypes) : <code>enum</code>
         * _Freja_
@@ -445,6 +446,8 @@ Translate a code into a message
 | REGISTRATION_LEVEL | <code>string</code> | The users registaion level |
 | RELYING_PARTY_USER_ID | <code>string</code> | The relying party user ID |
 | INTEGRATOR_SPECIFIC_USER_ID | <code>string</code> | The integrator specific user ID |
+| UNIQUE_PERSONAL_IDENTIFIER | <code>string</code> | A freja globally unique identifier |
+| LOA_LEVEL | <code>string</code> | The level of assurance for the identity |
 
 <a name="module_freja..FrejaUserAttributeCollections"></a>
 
@@ -460,6 +463,21 @@ Translate a code into a message
 | ALL_BASIC | <code>Array.&lt;UserAttributes&gt;</code> | All attributes when running in basic mode (All attributes when in BASIC registration level) |
 | COMMON_AUTH | <code>Array.&lt;UserAttributes&gt;</code> | Attributes commonly used for authentication (Requires EXTENDED or PLUS registration level) |
 | COMMON_SIGN | <code>Array.&lt;UserAttributes&gt;</code> | Attributes commonly used for signing (Requires EXTENDED or PLUS registration level) |
+
+<a name="module_freja..FrejaLOALevel"></a>
+
+### freja~FrejaLOALevel : <code>enum</code>
+**Kind**: inner enum of [<code>freja</code>](#module_freja)  
+**Category**: Enums  
+**Read only**: true  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| LOA1 | <code>string</code> | "LOA1" |
+| LOA2 | <code>string</code> | "LOA2" |
+| LOA3 | <code>string</code> | "LOA1" |
+| LOA3_NR | <code>string</code> | "LOA3_NR" |
 
 <a name="module_freja..FrejaRequestStatus"></a>
 
@@ -668,6 +686,8 @@ Translate a code into a message
 | [freja.relyingPartyUserId] | <code>string</code> | The relying party user ID |
 | [freja.registrationLevel] | <code>FrejaRegistrationLevel</code> | The registration level |
 | [freja.customIdentifier] | <code>string</code> | The custom identifier |
+| [freja.loaLevel] | <code>FrejaLOALevel</code> | The level of assurance |
+| [freja.uniquePersonalIdentifier] | <code>string</code> | The unique personal identifier |
 
 <a name="module_freja..IFrejaUserContact"></a>
 

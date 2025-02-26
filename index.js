@@ -168,6 +168,8 @@ const FrejaUserAddressSource = Object.freeze({
  * @property {string} REGISTRATION_LEVEL The users registaion level
  * @property {string} RELYING_PARTY_USER_ID The relying party user ID
  * @property {string} INTEGRATOR_SPECIFIC_USER_ID The integrator specific user ID
+ * @property {string} UNIQUE_PERSONAL_IDENTIFIER A freja globally unique identifier
+ * @property {string} LOA_LEVEL The level of assurance for the identity
  */
 const FrejaUserAttributes = Object.freeze({
     BASIC_USER_INFO: 'BASIC_USER_INFO',
@@ -183,7 +185,9 @@ const FrejaUserAttributes = Object.freeze({
     REGISTRATION_LEVEL: 'REGISTRATION_LEVEL',
     RELYING_PARTY_USER_ID: 'RELYING_PARTY_USER_ID',
     INTEGRATOR_SPECIFIC_USER_ID: 'INTEGRATOR_SPECIFIC_USER_ID',
-    CUSTOM_IDENTIFIER: 'CUSTOM_IDENTIFIER'
+    CUSTOM_IDENTIFIER: 'CUSTOM_IDENTIFIER',
+    UNIQUE_PERSONAL_IDENTIFIER: 'UNIQUE_PERSONAL_IDENTIFIER',
+    LOA_LEVEL: 'LOA_LEVEL'
 });
 
 /**
@@ -209,7 +213,8 @@ const FrejaUserAttributeCollections = Object.freeze({
         FrejaUserAttributes.DOCUMENT,
         FrejaUserAttributes.REGISTRATION_LEVEL,
         FrejaUserAttributes.RELYING_PARTY_USER_ID,
-        FrejaUserAttributes.INTEGRATOR_SPECIFIC_USER_ID ],
+        FrejaUserAttributes.INTEGRATOR_SPECIFIC_USER_ID,
+    ],
     ALL_BASIC: [
         FrejaUserAttributes.EMAIL_ADDRESS,
         FrejaUserAttributes.ALL_EMAIL_ADDRESSES,
@@ -229,6 +234,22 @@ const FrejaUserAttributeCollections = Object.freeze({
         FrejaUserAttributes.SSN ],
 });
 
+
+/**
+ * @readonly
+ * @enum {Object}
+ * @category Enums
+ * @property {string} LOA1 "LOA1"
+ * @property {string} LOA2 "LOA2"
+ * @property {string} LOA3 "LOA1"
+ * @property {string} LOA3_NR "LOA3_NR"
+ */
+const FrejaLOALevel = Object.freeze({
+    LOA1: 'LOA1',
+    LOA2: 'LOA2',
+    LOA3: 'LOA3',
+    LOA3_NR: 'LOA3_NR',
+});
 
 /**
  * @readonly
@@ -504,6 +525,8 @@ const FrejaDocumentTypes = Object.freeze({
  * @property {string} [freja.relyingPartyUserId=undefined] The relying party user ID
  * @property {FrejaRegistrationLevel} [freja.registrationLevel=undefined] The registration level
  * @property {string} [freja.customIdentifier=undefined] The custom identifier
+ * @property {FrejaLOALevel} [freja.loaLevel=undefined] The level of assurance
+ * @property {string} [freja.uniquePersonalIdentifier=undefined] The unique personal identifier
  */
 
 /**
@@ -712,7 +735,7 @@ class FrejaAPI {
      */
     UserInfoFactory(userData) {
         const emailRegexp = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
-        const phoneRegexp = /^\+((?:9[679]|8[035789]|6[789]|5[90]|42|3[578]|2[1-689])|9[0-58]|8[1246]|6[0-6]|5[1-8]|4[013-9]|3[0-469]|2[70]|7|1)(?:\W*\d){0,13}\d$/;
+        const phoneRegexp = /^(\+46|0|0046)7(\d|-){8}$/;
         const ssnRegexp = /^(SE(19|20)\d{2}([0][1-9]|[1][012])([0|1][1-9]|[3][012])[-]?\d{4}|NO\d{11}|FI\d{6}[-|A]\d{3}[0-9A-Z]|DK\d{10})*$/;
 
         // No data supplied, we are going inferred
@@ -1365,6 +1388,8 @@ class FrejaAPI {
                 if (decoded.requestedAttributes.emailAddress) result.contact.emailAddress = decoded.requestedAttributes.emailAddress;
                 if (decoded.requestedAttributes.relyingPartyUserId) result.freja.relyingPartyUserId = decoded.requestedAttributes.relyingPartyUserId;
                 if (decoded.requestedAttributes.registrationLevel) result.freja.registrationLevel = decoded.requestedAttributes.registrationLevel;              
+                if (decoded.requestedAttributes.loaLevel) result.freja.loaLevel = decoded.requestedAttributes.loaLevel;              
+                if (decoded.requestedAttributes.uniquePersonalIdentifier) result.freja.uniquePersonalIdentifier = decoded.requestedAttributes.uniquePersonalIdentifier;              
 
                 if (decoded.requestedAttributes.addresses) {
                     result.contact.allAddresses = [];

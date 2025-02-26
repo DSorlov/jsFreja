@@ -63,13 +63,21 @@ declare module "freja" {
         DOCUMENT,
         REGISTRATION_LEVEL,
         RELYING_PARTY_USER_ID,
-        INTEGRATOR_SPECIFIC_USER_ID
+        INTEGRATOR_SPECIFIC_USER_ID,
+        UNIQUE_PERSONAL_IDENTIFIER,
+        LOA_LEVEL
     }
     const enum FrejaUserAttributeCollections {
         ALL_EXTENDED,
         ALL_BASIC,
         COMMON_AUTH,
         COMMON_SIGN
+    }
+    const enum FrejaLOALevel {
+        LOA1,
+        LOA2,
+        LOA3,
+        LOA3_NR
     }
     const enum FrejaRequestStatus {
         STARTED,
@@ -340,6 +348,8 @@ declare module "freja" {
      * @property [freja.relyingPartyUserId] - <p>The relying party user ID</p>
      * @property [freja.registrationLevel] - <p>The registration level</p>
      * @property [freja.customIdentifier] - <p>The custom identifier</p>
+     * @property [freja.loaLevel] - <p>The level of assurance</p>
+     * @property [freja.uniquePersonalIdentifier] - <p>The unique personal identifier</p>
      */
     type IFrejaServiceData = {};
     /**
